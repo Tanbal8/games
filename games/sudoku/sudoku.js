@@ -32,8 +32,9 @@ function start() {
         kol = [];
         for (let a = 0 ; a < 81 ; a++) {
             let x = (a + 1) % 9;
-            if (x == 0)
+            if (x == 0) {
                 x = 9;
+            }
             let y = (81 - (a + 1) + x) / 9;
             let khoone;
             switch (y) {
@@ -109,9 +110,11 @@ function start() {
                     case 0 :
                         Rotate();
                         listNums = [];
-                        for (let r = 8 ; r > -1 ; r--)
-                            for (let s = 0 ; s < 9 ; s++)
+                        for (let r = 8 ; r > -1 ; r--) {
+                            for (let s = 0 ; s < 9 ; s++) {
                                 listNums.push(xs[r][s]);
+                            }
+                        }
                         break;
                     // 180
                     case 1 :
@@ -121,29 +124,38 @@ function start() {
                     case 2 :
                         Rotate();
                         listNums = [];
-                        for (let r = 0 ; r < 9 ; r++)
-                            for (let s = 8 ; s > -1 ; s--)
+                        for (let r = 0 ; r < 9 ; r++) {
+                            for (let s = 8 ; s > -1 ; s--) {
                                 listNums.push(xs[r][s]);
+                            }
+                        }
                         break;
                 }
                 function Rotate() {
-                    for (let z = 0 ; z < 9 ; z++)
-                        for (let s = z ; s < z + 1 ; s++)
-                            for (let t = s ; t < 81 ; t += 9)
+                    for (let z = 0 ; z < 9 ; z++) {
+                        for (let s = z ; s < z + 1 ; s++) {
+                            for (let t = s ; t < 81 ; t += 9) {
                                 xs[z].push(listNums2[t]);
+                            }
+                        }
+                    }
                 }
                 break;
             // translate
             case 2 :
                 let translateNum = Math.floor(Math.random() * 2);
                 switch (translateNum) {
-                    // vertical
+                    // عمودی
                     case 0 :
                         let columns = [[],[],[]];
-                        for (let z = 0 ; z < 3 ; z++)
-                            for (let s = 3 * z ; s < (3 * z) + 3 ; s++)
-                                for (let t = s ; t < 81 ; t += 9)
+                        for (let z = 0 ; z < 3 ; z++) {
+                            for (let s = 3 * z ; s < (3 * z) + 3 ; s++) {
+                                for (let t = s ; t < 81 ; t += 9) {
                                     columns[z].push(listNums2[t]);
+                                }
+
+                            }
+                        }
                         Column();
                         function Column() {
                             let n1 = Math.floor(Math.random() * 3);
@@ -158,20 +170,26 @@ function start() {
                             columns[n2] = c1;
                         }
                         listNums = [];
-                        for (let d = 0 ; d < 9 ; d++)
-                            for (let e = 0 ; e < 3 ; e++)
-                                for (let f = d ; f < 27 ; f += 9)
+                        for (let d = 0 ; d < 9 ; d++) {
+                            for (let e = 0 ; e < 3 ; e++) {
+                                for (let f = d ; f < 27 ; f += 9) {
                                     listNums.push(columns[e][f]);
+                                }
+                            }
+                        }
                         break;
-                    // hortizonal
+                    // افقی
                     case 1 :
                         let rows = [[],[],[]];
-                        for (let z = 0 ; z < 27 ; z++)
+                        for (let z = 0 ; z < 27 ; z++) {
                             rows[0].push(listNums2[z]);
-                        for (let z = 27 ; z < 54 ; z++)
+                        }
+                        for (let z = 27 ; z < 54 ; z++) {
                             rows[1].push(listNums2[z]);
-                        for (let z = 54 ; z < 81 ; z++)
+                        }
+                        for (let z = 54 ; z < 81 ; z++) {
                             rows[2].push(listNums2[z]);
+                        }
                         Row();
                         function Row() {
                             let n1 = Math.floor(Math.random() * 3);
@@ -186,9 +204,11 @@ function start() {
                             rows[n2] = r1;
                         }
                         listNums = [];
-                        for (let e = 0 ; e < 3 ; e++)
-                            for (let f = 0 ; f < 27 ; f++)
+                        for (let e = 0 ; e < 3 ; e++) {
+                            for (let f = 0 ; f < 27 ; f++) {
                                 listNums.push(rows[e][f]);
+                            }
+                        }
                         break;
                 }
                 break;
@@ -197,39 +217,51 @@ function start() {
                 let scaleNum = Math.floor(Math.random() * 2);
                 scaleNum = 1;
                 switch (scaleNum) {
-                    // vertical
+                    // عمودی
                     case 0 :
                         let xs = [[],[],[],[],[],[],[],[],[]];
-                        for (let z = 0 ; z < 9 ; z++)
-                            for (let s = z ; s < z + 1 ; s++)
-                                for (let t = s ; t < 81 ; t += 9)
+                        for (let z = 0 ; z < 9 ; z++) {
+                            for (let s = z ; s < z + 1 ; s++) {
+                                for (let t = s ; t < 81 ; t += 9) {
                                     xs[z].push(listNums2[t]);
-                        for (let z = 0 ; z < 9 ; z++)
+                                }
+                            }
+                        }
+                        for (let z = 0 ; z < 9 ; z++) {
                             xs[z].reverse();
+                        }
                         listNums = [];
-                        for (let r = 0 ; r < 9 ; r++)
-                            for (let t = 0 ; t < 9 ; t++)
-                                listNums.push(xs[t][r]);
+                        for (let r = 0 ; r < 9 ; r++) {
+                            for (let t = 0 ; t < 9 ; t++) {
+                                listNums.push(xs[t][r])
+                            }
+                        }
                         break;
-                    // horizontal
+                    // افقی
                     case 1 :
                         let ys = [[],[],[],[],[],[],[],[],[]];
-                        for (let r = 0 ; r < 9 ; r++)
-                            for (let s = r * 9 ; s < r * 9 + 9 ; s++)
+                        for (let r = 0 ; r < 9 ; r++) {
+                            for (let s = r * 9 ; s < r * 9 + 9 ; s++) {
                                 ys[r].push(listNums[s]);
-                        for (let z = 0 ; z < 9 ; z++)
+                            }
+                        }
+                        for (let z = 0 ; z < 9 ; z++) {
                             ys[z].reverse();
+                        }
                         listNums = [];
-                        for (let r = 0 ; r < 9 ; r++)
-                            for (let s = 0 ; s < 9 ; s++)
+                        for (let r = 0 ; r < 9 ; r++) {
+                            for (let s = 0 ; s < 9 ; s++) {
                                 listNums.push(ys[r][s]);
+                            }
+                        }
                         break;
                     }
                 break;
         }
     }
-    for (let z = 0 ; z < num ; z++)
+    for (let z = 0 ; z < num ; z++) {
         add();
+    }
     function add() {
         let n = Math.floor(Math.random() * 81);
         if (!kol[n].changeable) {
@@ -245,13 +277,16 @@ function start() {
 for (let n = 0 ; n < 9 ; n++) {
     numbersDiv[n].onclick = function() {
         if (numbers[n] == false) {
-            for (let x = 0 ; x < 9 ; x++)
-                if (numbers[x])
+            for (let x = 0 ; x < 9 ; x++) {
+                if (numbers[x]) {
                     numbers[x] = false;
+                }
+            }
             numbers[n] = true;
         }
-        else
+        else {
             numbers[n] = false;
+        }
         let numberCheck = false;
         for (let x = 0 ; x < 9 ; x++) {
             if (numbers[x]) {
@@ -260,12 +295,15 @@ for (let n = 0 ; n < 9 ; n++) {
                 val = x + 1;
                 active();
             }
-            else
+            else {
                 numbersDiv[x].classList.remove("numbers-on");
+            }
         }
-        if (!numberCheck)
-            for (let z = 0 ; z < 81 ; z++)
+        if (!numberCheck) {
+            for (let z = 0 ; z < 81 ; z++) {
                 koldiv[z].classList.remove("active");
+            }
+        }
     }
 }
 function easy() {
@@ -292,13 +330,15 @@ function startGame() {
     timerDiv.style.display = "flex";
     window.timer = setInterval(function() {
         s++;
-        if (s < 10)
+        if (s < 10) {
             s = "0" + s;
+        }
         if (s == 60) {
             s = "00";
             m++;
-            if (m < 10)
+            if (m < 10) {
                 m = "0" + m;
+            }
         }
         sDiv.innerHTML = s;
         mDiv.innerHTML = m;
@@ -335,25 +375,32 @@ for (let n = 0 ; n < 81 ; n++) {
                 }
             }
         }
-        if (!numberCheck)
+        if (!numberCheck) {
             if (kol[n].value != 0) {
                 numbers[kol[n].value - 1] = true;
                 numbersDiv[kol[n].value - 1].classList.add("numbers-on");
                 val = kol[n].value;
                 active();
             }
-        for (let b = 0 ; b < 81 ; b++)
+        }
+        for (let b = 0 ; b < 81 ; b++) {
             koldiv[b].classList.remove("wrong");
-        for (let b = 0 ; b < 81 ; b++)
-            for (let c = 0 ; c < 81 ; c++)
-                if (b != c)
+        }
+        for (let b = 0 ; b < 81 ; b++) {
+            for (let c = 0 ; c < 81 ; c++) {
+                if (b != c) {
                     if ((kol[b].x == kol[c].x) || (kol[b].y == kol[c].y) || (kol[b].khoone == kol[c].khoone)) {
-                        if ((kol[b].value == kol[c].value) && kol[b].value != 0)
+                        if ((kol[b].value == kol[c].value) && kol[b].value != 0) {
                             koldiv[b].classList.add("wrong");
                             koldiv[c].classList.add("wrong");
                         }
-        for (let b = 0 ; b < 9 ; b++)
-            numbersDiv[b].style.backgroundColor = "azure"
+                    }
+                }
+            }
+        }
+        for (let b = 0 ; b < 9 ; b++) {
+            numbersDiv[b].style.backgroundColor = "azure";
+        }
         for (let b = 1 ; b < 10 ; b++) {
             let array = [];
             let number;
@@ -361,10 +408,13 @@ for (let n = 0 ; n < 81 ; n++) {
             nFunction();
             aFunction();
             function nFunction() {
-                for (let c = 0 ; c < 81 ; c++)
-                    if (kol[c].khoone == number)
-                        if (kol[c].value == b)
+                for (let c = 0 ; c < 81 ; c++) {
+                    if (kol[c].khoone == number) {
+                        if (kol[c].value == b) {
                             array.push(kol[c]);
+                        }
+                    }
+                }
             }
             function aFunction() {
                 if (array.length == 1) {    
@@ -374,8 +424,9 @@ for (let n = 0 ; n < 81 ; n++) {
                         nFunction();
                         aFunction();
                     }
-                    if (number == 10)
+                    if (number == 10) {
                         numbersDiv[b-1].style.backgroundColor = "rgb(0,150,255)";
+                    }
                 }
             }
         }
@@ -384,7 +435,8 @@ for (let n = 0 ; n < 81 ; n++) {
 function active() {
     for (let z = 0 ; z < 81 ; z++) {
         koldiv[z].classList.remove("active");
-        if (kol[z].value == val)
+        if (kol[z].value == val) {
             koldiv[z].classList.add("active");
+        }
     }
 }

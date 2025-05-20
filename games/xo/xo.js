@@ -69,7 +69,7 @@ for (let a = 0 ; a < 9 ; a++) {
                     oDiv.style.filter = "";
                     xDiv.style.filter = "drop-shadow(-1px -1px 0.6px rgb(20,240,200)) drop-shadow(0px -1px 0.6px rgb(20,240,200)) drop-shadow(1px -1px 0.6px rgb(20,240,200)) drop-shadow(-1px 0px 0.6px rgb(20,240,200)) drop-shadow(1px 0px 0.6px rgb(20,240,200)) drop-shadow(-1px 1px 0.6px rgb(20,240,200)) drop-shadow(0px 1px 0.6px rgb(20,240,200)) drop-shadow(1px 1px 0.6px rgb(20,240,200)) ";
                 }
-                images[a].src = "../image/xo/" + nobat + "8.png";
+                images[a].src = "image/" + nobat + "-win.png";
                     var opacityAnimation = setInterval(function(){
                     let opacity = images[a].style.opacity * 10;
                     opacity += 1;
@@ -115,10 +115,8 @@ for (let a = 0 ; a < 9 ; a++) {
                 function winFunction() {
                     endCheck = true;
                     drawCheck = false;
-                    for (let b = 0 ; b < endArray.length ; b++) {
-                        // images[endArray[b]].src = "../image/xo/" + nobat + "5.png";
+                    for (let b = 0 ; b < endArray.length ; b++)
                         images[endArray[b]].classList.add("scale");
-                    }
                     endFunction();
                 }   
                 function endFunction() {

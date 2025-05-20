@@ -1,10 +1,10 @@
 @font-face {
     font-family: agency;
-    src: url(../font/english/AgencyFB-Bold.ttf);
+    src: url(../../font/english/AgencyFB-Bold.ttf);
 }
 @font-face {
     font-family: consola;
-    src: url(../font/english/CONSOLA.TTF);
+    src: url(../../font/english/CONSOLA.TTF);
 }
 *::selection {
     background-color: transparent;
@@ -149,10 +149,10 @@
     background-repeat: no-repeat;
 }
 .f-img {
-    background-image: url(../image/bomb/flag4.png);
+    background-image: url(image/flag.png);
 }
 .b-img {
-    background-image: url(../image/bomb/bomb.png);
+    background-image: url(image/bomb.png);
 }
 .f-num, .b-num {
     width: 30%;
@@ -205,10 +205,10 @@
     background-repeat: no-repeat;
 }
 .bomb-img {
-    background-image: url(../image/bomb/bomb.png);
+    background-image: url(image/bomb.png);
 }
 .flag-img {
-    background-image: url(../image/bomb/flag4.png);
+    background-image: url(image/flag.png);
 }
 .restart {
     width: 100%;

@@ -244,11 +244,11 @@ body {
     margin-right: 0;
 }
 .x-span {
-    background-image: url(image/x-win.png);
+    background-image: url(image/x.png);
     filter: drop-shadow(0 0 2px rgb(0,100,255)) drop-shadow(0 0 5px rgba(0,220,255));
 }
 .o-span {
-    background-image: url(image/o-win.png);
+    background-image: url(image/o.png);
     filter: drop-shadow(0 0 2px rgb(255, 30, 30)) drop-shadow(0 0 5px rgb(255, 90, 90));
 }
 .restart-btn {
@@ -307,10 +307,10 @@ body {
     background-repeat: no-repeat;
 }
 .o-bgimg {
-    background-image: url(image/o-win.png);
+    background-image: url(image/o.png);
 }
 .x-bgimg {
-    background-image: url(image/x-win.png);
+    background-image: url(image/x.png);
 }
 .o-info, .x-info {
     width: 300px;

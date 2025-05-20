@@ -69,7 +69,7 @@ for (let a = 0 ; a < 9 ; a++) {
                     oDiv.style.filter = "";
                     xDiv.style.filter = "drop-shadow(-1px -1px 0.6px rgb(20,240,200)) drop-shadow(0px -1px 0.6px rgb(20,240,200)) drop-shadow(1px -1px 0.6px rgb(20,240,200)) drop-shadow(-1px 0px 0.6px rgb(20,240,200)) drop-shadow(1px 0px 0.6px rgb(20,240,200)) drop-shadow(-1px 1px 0.6px rgb(20,240,200)) drop-shadow(0px 1px 0.6px rgb(20,240,200)) drop-shadow(1px 1px 0.6px rgb(20,240,200)) ";
                 }
-                images[a].src = "image/" + nobat + "-win.png";
+                images[a].src = "image/" + nobat + ".png";
                     var opacityAnimation = setInterval(function(){
                     let opacity = images[a].style.opacity * 10;
                     opacity += 1;

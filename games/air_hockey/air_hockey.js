@@ -42,85 +42,257 @@ class Circle {
         this.div.innerHTML = this.mass + "kg";
         Game.div.appendChild(this.div);
     }
-//     update() {
-//     this.position = this.position.add(this.velocity);
-//     for (let a = 0; a < Game.objects.length; a++) {
-//         let other = Game.objects[a];
-//         if (this !== other && other instanceof Circle) {
-//             let center1 = this.position.add(this.radius);
-//             let center2 = other.position.add(other.radius);
-//             let dx = center1.x - center2.x;
-//             let dy = center1.y - center2.y;
-//             let distance = Math.sqrt(dx * dx + dy * dy);
-//             if (distance < this.radius + other.radius) {
-//                 let unit_normal = new Vector(dx / distance, dy / distance);
-//                 let unit_tangent = new Vector(-unit_normal.y, unit_normal.x);
-//                 let v1 = this.velocity;
-//                 let v2 = other.velocity;
-//                 let m1 = this.mass;
-//                 let m2 = other.mass;
-//                 let v1_n = unit_normal.x * v1.x + unit_normal.y * v1.y;
-//                 let v1_t = unit_tangent.x * v1.x + unit_tangent.y * v1.y;
-//                 let v2_n = unit_normal.x * v2.x + unit_normal.y * v2.y;
-//                 let v2_t = unit_tangent.x * v2.x + unit_tangent.y * v2.y;
-//                 let v1_n_f = (v1_n * (m1 - m2) + 2 * m2 * v2_n) / (m1 + m2);
-//                 let v2_n_f = (v2_n * (m2 - m1) + 2 * m1 * v1_n) / (m1 + m2);
-//                 let v1_n_vector = unit_normal.multiply(v1_n_f);
-//                 let v1_t_vector = unit_tangent.multiply(v1_t);
-//                 let v2_n_vector = unit_normal.multiply(v2_n_f);
-//                 let v2_t_vector = unit_tangent.multiply(v2_t);
-//                 this.velocity = v1_n_vector.add(v1_t_vector);
-//                 other.velocity = v2_n_vector.add(v2_t_vector);
-//                 let overlap = (this.radius + other.radius) - distance;
-//                 let correction = unit_normal.multiply(overlap / 2 + 0.75);
-//                 this.position = this.position.add(correction);
-//                 other.position = other.position.subtract(correction);
-//             }
-//         }
-//     }
-//     if (this.position.y <= 0) {
-//         this.velocity.y = -this.velocity.y;
-//         this.position.y = 0;
-//     }
-//     if (this.position.y + 2 * this.radius >= window.innerHeight) {
-//         this.velocity.y = -this.velocity.y;
-//         this.position.y = window.innerHeight - 2 * this.radius;
-//     }
-//     if (this.position.x <= 0) {
-//         this.velocity.x = -this.velocity.x;
-//         this.position.x = 0;
-//         if (this.div.style.background == "pink") {
-//             blue++;
-//             console.clear();
-//             console.log("Blue: " + blue + " - " + green + " :Green");
-//         }
-//     }
-//     if (this.position.x + 2 * this.radius >= window.innerWidth) {
-//         this.velocity.x = -this.velocity.x;
-//         this.position.x = window.innerWidth - 2 * this.radius;
-//     }
-//     this.div.style.top = this.position.y + "px";
-//     this.div.style.left = this.position.x + "px";
-// }
-    collision_check(other) {
-        return Math.sqrt(((this.position.x - other.position.x) ** 2) + ((this.position.y - other.position.y) ** 2)) <= this.radius + other.radius;
-    }
 }
 var start_space = 20;
 var Game = {
-    check: 0,
+    check: false,
+    stop_check: false,
     div: document.getElementById("game-div"),
+    piece_radius: 30,
+    ball_radius: 15,
+    first: true,
     start: function() {
+        this.check = true;
         this.width = this.div.offsetWidth;
         this.height = this.div.offsetHeight;
-        this.blue = new Circle(30, start_space, (this.height / 2) - 30, 10, "blue");
-        this.red = new Circle(30, this.width - start_space - (2 * 30), (this.height / 2) - 30, 10, "red");
-        this.ball = new Circle(15, (this.width / 2) - 15, (this.height / 2) - 30, 5, "black");
+        this.blue = new Circle(this.piece_radius, 0, 0, 4, "blue");
+        this.red = new Circle(this.piece_radius, 0, 0, 4, "red");
+        this.ball = new Circle(this.ball_radius, (this.width / 2) - this.ball_radius, (this.height / 2) - this.ball_radius, 1, "black");
+        this.piece_speed = 3;
+        this.ball.speed = 3;
+        this.ball.start_max_degree = 40;
+        this.ball.speed_factor = 1;
+        this.blue.direction_key = {up: 'w', down: 's', right: 'd', left: 'a'};
+        this.red.direction_key = {up: 'ArrowUp', down: 'ArrowDown', right: 'ArrowRight', left: 'ArrowLeft'};
+        this.blue.update = piece_update.bind(this.blue);
+        this.red.update = piece_update.bind(this.red);
+        this.ball.update = ball_update.bind(this.ball);
+        this.blue.move = {up: false, down: false, right: false, left: false};
+        this.red.move = {up: false, down: false, right: false, left: false};
+        this.blue.speed = this.piece_speed;
+        this.red.speed = this.piece_speed;
+        this.blue.collision_check = blue_collision_check.bind(this.blue);
+        this.red.collision_check = red_collision_check.bind(this.red);
+        this.interval();
+        this.reset();
     },
-    stop: function() {},
-    continue: function() {},
-    restart: function() {}
+    stop: function() {
+        this.check = 0;
+        this.stop_check = 1;
+        for (let key in this.blue.move) {
+            this.blue.move[key] = false;
+            this.red.move[key] = false;
+        }
+    },
+    continue: function() {
+        this.check = 1;
+        this.stop_check = 0;
+        this.interval();
+    },
+    restart: function() {},
+    interval: function() {
+        this.blue.update();
+        this.red.update();
+        this.ball.update();
+        if (this.check)
+            requestAnimationFrame(this.interval.bind(this));
+    },
+    reset: function() {
+        this.blue.position.x = start_space; 
+        this.blue.position.y = (this.height / 2) - this.piece_radius; 
+        this.red.position.x = this.width - start_space - (2 * this.piece_radius); 
+        this.red.position.y = (this.height / 2) - this.piece_radius;
+        this.blue.div.style.top = this.blue.position.y + "px";
+        this.blue.div.style.left = this.blue.position.x + "px";
+        this.red.div.style.top = this.red.position.y + "px";
+        this.red.div.style.left = this.red.position.x + "px";
+        let degree = Math.floor(Math.random() * (2 * this.ball.start_max_degree)) - this.ball.start_max_degree;
+        let radiant = degree / 180 * Math.PI;
+        Game.ball.velocity.x = Game.ball.speed * Math.cos(radiant);
+        Game.ball.velocity.y = Game.ball.speed * Math.sin(radiant);
+    }
 }
 window.onload = function() {
     Game.start();
 }
+window.onkeydown = function(e) {
+    switch (e.key) {
+        case Game.blue.direction_key.up :
+            if (Game.check) Game.blue.move.up = true;
+            break;
+        case Game.blue.direction_key.down :
+            if (Game.check) Game.blue.move.down = true;
+            break;
+        case Game.blue.direction_key.right :
+            if (Game.check) Game.blue.move.right = true;
+            break;
+        case Game.blue.direction_key.left :
+            if (Game.check) Game.blue.move.left = true;
+            break;
+        case Game.red.direction_key.up :
+            if (Game.check) Game.red.move.up = true;
+            break;
+        case Game.red.direction_key.down :
+            if (Game.check) Game.red.move.down = true;
+            break;
+        case Game.red.direction_key.right :
+            if (Game.check) Game.red.move.right = true;
+            break;
+        case Game.red.direction_key.left :
+            if (Game.check) Game.red.move.left = true;
+            break;
+        case "Escape" :
+            if (Game.check) Game.stop();
+            break;
+        case "Enter" :
+            if (Game.stop_check) Game.continue();
+            break;
+    }
+}
+window.onkeyup = function(e) {
+    switch (e.key) {
+        case Game.blue.direction_key.up :
+            Game.blue.move.up = false;
+            break;
+        case Game.blue.direction_key.down :
+            Game.blue.move.down = false;
+            break;
+        case Game.blue.direction_key.right :
+            Game.blue.move.right = false;
+            break;
+        case Game.blue.direction_key.left :
+            Game.blue.move.left = false;
+            break;
+        case Game.red.direction_key.up :
+            Game.red.move.up = false;
+            break;
+        case Game.red.direction_key.down :
+            Game.red.move.down = false;
+            break;
+        case Game.red.direction_key.right :
+            Game.red.move.right = false;
+            break;
+        case Game.red.direction_key.left :
+            Game.red.move.left = false;
+            break;
+    }
+}
+function piece_update() {
+    let unit_velocity = new Vector(0, 0);
+    if (this.move.up) unit_velocity.y--;
+    if (this.move.down) unit_velocity.y++;
+    if (this.move.right) unit_velocity.x++;
+    if (this.move.left) unit_velocity.x--;
+    this.velocity = unit_velocity.multiply((unit_velocity.x != 0 && unit_velocity.y != 0) ? Math.sqrt((this.speed ** 2) / 2) : this.speed);
+    this.position = this.position.add(this.velocity);
+    this.collision_check();
+    this.div.style.top = this.position.y + "px";
+    this.div.style.left = this.position.x + "px";
+}
+function ball_update() {
+    this.position = this.position.add(this.velocity);
+    if (this.position.y <= 0) {
+        this.position.y = 0;
+        this.velocity.y = -this.velocity.y;
+    }
+    if (this.position.y + (this.radius * 2) >= Game.height) {
+        this.position.y = Game.height - (this.radius * 2);
+        this.velocity.y = -this.velocity.y;
+    }
+    if (this.position.x <= 0) {
+        this.position.x = 0;
+        if ((this.position.y <= (Game.height / 2) - (0 / 2)) || (this.position.y >= (Game.height / 2) + (0 / 2))) {
+            this.velocity.x = -this.velocity.x;
+        }
+    }
+    if (this.position.x + (this.radius * 2) >= Game.width) {
+        this.position.x = (Game.width - (this.radius * 2));
+        if ((this.position.y <= (Game.height / 2) - (0 / 2)) || (this.position.y >= (Game.height / 2) + (0 / 2))) {
+            this.velocity.x = -this.velocity.x;
+            
+        }
+    }
+    this.div.style.top = this.position.y + "px";
+    this.div.style.left = this.position.x + "px";
+}
+function blue_collision_check() {
+    // wall
+    if (this.position.y <= 0) {
+        this.position.y = 0;
+        this.velocity.y = 0;
+    }
+    if (this.position.y + (this.radius * 2) >= Game.height) {
+        this.position.y = Game.height - (this.radius * 2);
+        this.velocity.y = 0;
+    }
+    if (this.position.x <= 0) {
+        this.position.x = 0;
+        this.velocity.x = 0;
+    }
+    if (this.position.x + (this.radius * 2) >= (Game.width / 2) - 2.5) {
+        this.position.x = ((Game.width / 2) - (this.radius * 2)) - 2.5;
+        this.velocity.x = 0;
+    }
+    // ball
+    let dx = (this.position.x + this.radius) - (Game.ball.position.x + Game.ball_radius);
+    let dy = (this.position.y + this.radius) - (Game.ball.position.y + Game.ball_radius);
+    if (Math.sqrt((dx ** 2) + (dy ** 2)) <= this.radius + Game.ball.radius) ball_collision(this);
+}
+function red_collision_check() {
+    // wall
+    if (this.position.y <= 0) {
+        this.position.y = 0;
+        this.velocity.y = 0;
+    }
+    if (this.position.y + (this.radius * 2) >= Game.height) {
+        this.position.y = Game.height - (this.radius * 2);
+        this.velocity.y = 0;
+    }
+    if (this.position.x <= (Game.width / 2) + 2.5) {
+        this.position.x = (Game.width / 2) + 2.5;
+        this.velocity.x = 0;
+    }
+    if (this.position.x + (this.radius * 2) >= Game.width) {
+        this.position.x = Game.width - (this.radius * 2);
+        this.velocity.x = 0;
+    }
+    // ball
+    let dx = (this.position.x + this.radius) - (Game.ball.position.x + Game.ball_radius);
+    let dy = (this.position.y + this.radius) - (Game.ball.position.y + Game.ball_radius);
+    if (Math.sqrt((dx ** 2) + (dy ** 2)) <= this.radius + Game.ball.radius) ball_collision(this);
+}
+function ball_collision(piece) {
+    let ball = Game.ball;
+    let center1 = piece.position.add(piece.radius);
+    let center2 = ball.position.add(ball.radius);
+    let dx = center1.x - center2.x;
+    let dy = center1.y - center2.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < piece.radius + ball.radius) {
+        let unit_normal = new Vector(dx / distance, dy / distance);
+        let unit_tangent = new Vector(-unit_normal.y, unit_normal.x);
+        let v1 = piece.velocity;
+        let v2 = ball.velocity;
+        let m1 = piece.mass;
+        let m2 = ball.mass;
+        let v1_n = unit_normal.x * v1.x + unit_normal.y * v1.y;
+        let v1_t = unit_tangent.x * v1.x + unit_tangent.y * v1.y;
+        let v2_n = unit_normal.x * v2.x + unit_normal.y * v2.y;
+        let v2_t = unit_tangent.x * v2.x + unit_tangent.y * v2.y;
+        let v1_n_f = (v1_n * (m1 - m2) + 2 * m2 * v2_n) / (m1 + m2);
+        let v2_n_f = (v2_n * (m2 - m1) + 2 * m1 * v1_n) / (m1 + m2);
+        let v1_n_vector = unit_normal.multiply(v1_n_f);
+        let v1_t_vector = unit_tangent.multiply(v1_t);
+        let v2_n_vector = unit_normal.multiply(v2_n_f);
+        let v2_t_vector = unit_tangent.multiply(v2_t);
+        piece.velocity = v1_n_vector.add(v1_t_vector);
+        ball.velocity = v2_n_vector.add(v2_t_vector).multiply(Game.ball.speed_factor);
+        let overlap = (piece.radius + ball.radius) - distance;
+        let correction = unit_normal.multiply(overlap / 2 + 0.5);
+        piece.position = piece.position.add(correction);
+        ball.position = ball.position.subtract(correction);
+    }
+}
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "hidden") Game.stop();
+});

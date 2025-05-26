@@ -39,7 +39,7 @@ class Circle {
         this.div.style.left = x + "px";
         this.velocity = new Vector(0, 0);
         this.div.style.background = background;
-        this.div.innerHTML = this.mass + "kg";
+        // this.div.style.boxShadow = "-5px -5px 8 px dark" + background + " inset";
         Game.div.appendChild(this.div);
     }
 }
@@ -50,20 +50,30 @@ var Game = {
     div: document.getElementById("game-div"),
     piece_radius: 30,
     ball_radius: 15,
+    goal_height: 200,
     first: true,
     start: function() {
         this.check = true;
         this.width = this.div.offsetWidth;
         this.height = this.div.offsetHeight;
-        this.blue = new Circle(this.piece_radius, 0, 0, 4, "blue");
-        this.red = new Circle(this.piece_radius, 0, 0, 4, "red");
-        this.ball = new Circle(this.ball_radius, (this.width / 2) - this.ball_radius, (this.height / 2) - this.ball_radius, 1, "black");
-        this.piece_speed = 3;
+        this.blue = new Circle(this.piece_radius, 0, 0, 3, "blue");
+        this.red = new Circle(this.piece_radius, 0, 0, 3, "red");
+        this.ball = new Circle(this.ball_radius, 0, 0, 1, "black");
+        this.piece_speed = 3.5;
         this.ball.speed = 3;
         this.ball.start_max_degree = 40;
         this.ball.speed_factor = 1;
         this.blue.direction_key = {up: 'w', down: 's', right: 'd', left: 'a'};
         this.red.direction_key = {up: 'ArrowUp', down: 'ArrowDown', right: 'ArrowRight', left: 'ArrowLeft'};
+        this.blue.score = 0;
+        this.red.score = 0;
+        this.blue.goal = {div: document.getElementById("blue-goal"), height: this.goal_height};
+        this.red.goal = {div: document.getElementById("red-goal"), height: this.goal_height};
+        this.blue.goal.div.style.height = this.blue.goal.height + "px";
+        this.red.goal.div.style.height = this.red.goal.height + "px";
+        let goal_size = parseFloat(window.getComputedStyle(this.blue.goal.div).borderWidth.slice(0, -2));
+        this.blue.goal.width = this.blue.goal.div.offsetWidth - goal_size;
+        this.red.goal.width = this.red.goal.div.offsetWidth - goal_size;
         this.blue.update = piece_update.bind(this.blue);
         this.red.update = piece_update.bind(this.red);
         this.ball.update = ball_update.bind(this.ball);
@@ -73,7 +83,6 @@ var Game = {
         this.red.speed = this.piece_speed;
         this.blue.collision_check = blue_collision_check.bind(this.blue);
         this.red.collision_check = red_collision_check.bind(this.red);
-        this.interval();
         this.reset();
     },
     stop: function() {
@@ -98,10 +107,15 @@ var Game = {
             requestAnimationFrame(this.interval.bind(this));
     },
     reset: function() {
+        Game.check = 1;
         this.blue.position.x = start_space; 
         this.blue.position.y = (this.height / 2) - this.piece_radius; 
         this.red.position.x = this.width - start_space - (2 * this.piece_radius); 
         this.red.position.y = (this.height / 2) - this.piece_radius;
+        this.ball.position.x = (this.width / 2) - this.ball.radius;
+        this.ball.position.y = (this.height / 2) - this.ball.radius;
+        this.ball.div.style.top = this.ball.position.y + "px";
+        this.ball.div.style.left = this.ball.position.x + "px";
         this.blue.div.style.top = this.blue.position.y + "px";
         this.blue.div.style.left = this.blue.position.x + "px";
         this.red.div.style.top = this.red.position.y + "px";
@@ -110,12 +124,17 @@ var Game = {
         let radiant = degree / 180 * Math.PI;
         Game.ball.velocity.x = Game.ball.speed * Math.cos(radiant);
         Game.ball.velocity.y = Game.ball.speed * Math.sin(radiant);
+        Game.ball.velocity.x *= -1;
+        setTimeout(() => {
+            Game.interval();
+        }, 1000);
     }
 }
 window.onload = function() {
     Game.start();
 }
 window.onkeydown = function(e) {
+    
     switch (e.key) {
         case Game.blue.direction_key.up :
             if (Game.check) Game.blue.move.up = true;
@@ -195,21 +214,76 @@ function ball_update() {
         this.position.y = 0;
         this.velocity.y = -this.velocity.y;
     }
-    if (this.position.y + (this.radius * 2) >= Game.height) {
+    else if (this.position.y + (this.radius * 2) >= Game.height) {
         this.position.y = Game.height - (this.radius * 2);
         this.velocity.y = -this.velocity.y;
     }
-    if (this.position.x <= 0) {
-        this.position.x = 0;
-        if ((this.position.y <= (Game.height / 2) - (0 / 2)) || (this.position.y >= (Game.height / 2) + (0 / 2))) {
+    else if (this.position.x <= 0) {
+        let up = (Game.height / 2) - (Game.blue.goal.height / 2);
+        let down = (Game.height / 2) + (Game.blue.goal.height / 2);
+        if (((this.position.y + this.radius) <= up) || ((this.position.y + this.radius) >= down)) {
+            this.position.x = 0;
             this.velocity.x = -this.velocity.x;
         }
+        else {
+            if (this.position.x <= -Game.red.goal.width) { // Goal
+                this.position.x = -Game.red.goal.width;
+                this.velocity.x = 0;
+                this.velocity.y = 0;
+                goal("red");
+            }
+            else {
+                let x = 0;
+                let y1 = -(Game.blue.goal.height / 2);
+                let y2 = (Game.height / 2) + (Game.blue.goal.height / 2);
+                let xm = this.position.x + this.radius;
+                let ym = this.position.y + this.radius;
+                if (((Math.sqrt(((xm - x) ** 2) + ((ym - y1) ** 2)) <= this.radius) && (xm <= 0)) || ((Math.sqrt(((xm - x) ** 2) + ((ym - y2) ** 2)) <= this.radius) && (xm <= 0))) {
+                    this.velocity.x = -this.velocity.x;
+                }
+                if (this.position.y <= (Game.height / 2) - (Game.blue.goal.height / 2)) {
+                    this.velocity.y = -this.velocity.y;
+                    this.position.y = (Game.height / 2) - (Game.blue.goal.height / 2);
+                }
+                else if (this.position.y >= (Game.height / 2) + (Game.blue.goal.height / 2)) {
+                    this.velocity.y = -this.velocity.y;
+                    this.position.y = (Game.height / 2) + (Game.blue.goal.height / 2);
+                }
+            }
+        }
     }
-    if (this.position.x + (this.radius * 2) >= Game.width) {
-        this.position.x = (Game.width - (this.radius * 2));
-        if ((this.position.y <= (Game.height / 2) - (0 / 2)) || (this.position.y >= (Game.height / 2) + (0 / 2))) {
+    else if (this.position.x + (this.radius * 2) >= Game.width) {
+        let up = (Game.height / 2) - (Game.red.goal.height / 2);
+        let down = (Game.height / 2) + (Game.red.goal.height / 2);
+        if (((this.position.y + this.radius) <= up) || ((this.position.y + this.radius) >= down)) {
+            this.position.x = (Game.width - (this.radius * 2));
             this.velocity.x = -this.velocity.x;
-            
+        }
+        else {
+            if (this.position.x + (2 * this.radius) >= Game.width + Game.red.goal.width) {
+                this.position.x = Game.width + Game.red.goal.width - (2 * this.radius);
+                this.velocity.x = 0;
+                this.velocity.y = 0;
+                goal("blue");
+            }
+            else {
+                let x = Game.width;
+                let y1 = (Game.height / 2) - (Game.red.goal.height / 2);
+                let y2 = (Game.height / 2) + (Game.red.goal.height / 2);
+                let xm = this.position.x + this.radius;
+                let ym = this.position.y + this.radius;
+                if (((Math.sqrt(((xm - x) ** 2) + ((ym - y1) ** 2)) <= this.radius) && (xm >= Game.width)) || ((Math.sqrt(((xm - x) ** 2) + ((ym - y2) ** 2)) <= this.radius) && xm <= Game.width)) {
+                    this.velocity.x = -this.velocity.x;
+                }
+                if (this.position.y <= (Game.height / 2) - (Game.blue.goal.height / 2)) {
+                    this.velocity.y = -this.velocity.y;
+                    this.position.y = (Game.height / 2) - (Game.blue.goal.height / 2);
+                }
+                else if (this.position.y >= (Game.height / 2) + (Game.blue.goal.height / 2)) {
+                    this.velocity.y = -this.velocity.y;
+                    this.position.y = (Game.height / 2) + (Game.blue.goal.height / 2);
+                }
+            }
         }
     }
     this.div.style.top = this.position.y + "px";
@@ -296,3 +370,19 @@ function ball_collision(piece) {
 document.addEventListener("visibilitychange", function() {
     if (document.visibilityState === "hidden") Game.stop();
 });
+function goal(color) {
+    switch (color) {
+        case "blue" :
+            Game.blue.score++;
+            break;
+        case "red" :
+            Game.red.score++;
+            break;
+    }
+    console.clear();
+    console.log("blue " + Game.blue.score + " - " + Game.red.score + " red");
+    setTimeout(() => {
+        Game.reset();
+    }, 1000);
+    Game.check = 0;
+}

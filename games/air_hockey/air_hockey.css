@@ -12,7 +12,7 @@
     height: 100%;
     position: relative;
 }
-.center-line {
+#center-line {
     width: 5px;
     background-color: black;
     height: calc(100% + 2px);
@@ -23,8 +23,20 @@
 }
 #game-div > div {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: #fff;
+    box-shadow: -5px -5px 8px rgba(0, 0, 0, 0.4) inset;
+}
+#blue-goal, #red-goal {
+    position: absolute;
+    width: 45px;
+    border-width: 5px;
+    border-style: solid;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#blue-goal {
+    right: 100%;
+}
+#red-goal {
+    left: 100%;
 }

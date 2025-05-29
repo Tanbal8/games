@@ -22,6 +22,9 @@ class Vector {
         if (typeof other == "number")
             return new Vector(this.x * other, this.y * other);
     }
+    unit() {
+        return new Vector(this.x / this.scale(), this.y / this.scale());
+    }
     to_string() {
         return `(${this.x},  ${this.y})`; 
     }
@@ -39,18 +42,56 @@ class Circle {
         this.div.style.left = x + "px";
         this.velocity = new Vector(0, 0);
         this.div.style.background = background;
-        // this.div.style.boxShadow = "-5px -5px 8 px dark" + background + " inset";
         Game.div.appendChild(this.div);
     }
 }
-var start_space = 20;
+class Timer {
+    constructor() {
+        this.centi_second = 0;
+        this.second = 0;
+        this.minute = 0;
+    }
+    set(minute, second, centi_second) {
+        this.minute = minute;
+        this.second = second;
+        this.centi_second = centi_second;
+    }
+    start() {
+        this.interval = setInterval(() => {
+            this.centi_second--;
+            if (this.centi_second < 0) {
+                this.centi_second = 99;
+                this.second--;
+                if (this.second < 0) {
+                    this.second = 99;
+                    this.minute--;
+                }
+            }
+            if (this.minute <= 0 && this.second <= 0 && this.centi_second <= 0) {
+                this.end();
+                this.stop();
+            }
+        }, 10);
+    }
+    stop() {
+        clearInterval(this.interval)
+    }
+    end() {
+        console.log("Timer Ended");
+    }
+    to_string() {
+        return this.minute + " : " + this.second + " : " + this.centi_second;
+    }
+}
 var Game = {
     check: false,
     stop_check: false,
     div: document.getElementById("game-div"),
     piece_radius: 30,
     ball_radius: 15,
+    goal_width: 45,
     goal_height: 200,
+    piece_start_space: 20,
     first: true,
     start: function() {
         this.check = true;
@@ -67,8 +108,10 @@ var Game = {
         this.red.direction_key = {up: 'ArrowUp', down: 'ArrowDown', right: 'ArrowRight', left: 'ArrowLeft'};
         this.blue.score = 0;
         this.red.score = 0;
-        this.blue.goal = {div: document.getElementById("blue-goal"), height: this.goal_height};
-        this.red.goal = {div: document.getElementById("red-goal"), height: this.goal_height};
+        this.blue.goal = {div: document.getElementById("blue-goal"), width: this.goal_width, height: this.goal_height};
+        this.red.goal = {div: document.getElementById("red-goal"), width: this.goal_width, height: this.goal_height};
+        this.blue.goal.div.style.width = this.blue.goal.width + "px";
+        this.red.goal.div.style.width = this.red.goal.width + "px";
         this.blue.goal.div.style.height = this.blue.goal.height + "px";
         this.red.goal.div.style.height = this.red.goal.height + "px";
         let goal_size = parseFloat(window.getComputedStyle(this.blue.goal.div).borderWidth.slice(0, -2));
@@ -79,6 +122,8 @@ var Game = {
         this.ball.update = ball_update.bind(this.ball);
         this.blue.move = {up: false, down: false, right: false, left: false};
         this.red.move = {up: false, down: false, right: false, left: false};
+        this.blue.div.classList.add("piece");
+        this.red.div.classList.add("piece");
         this.blue.speed = this.piece_speed;
         this.red.speed = this.piece_speed;
         this.blue.collision_check = blue_collision_check.bind(this.blue);
@@ -108,9 +153,9 @@ var Game = {
     },
     reset: function() {
         Game.check = 1;
-        this.blue.position.x = start_space; 
+        this.blue.position.x = this.piece_start_space; 
         this.blue.position.y = (this.height / 2) - this.piece_radius; 
-        this.red.position.x = this.width - start_space - (2 * this.piece_radius); 
+        this.red.position.x = this.width - this.piece_start_space - (2 * this.piece_radius); 
         this.red.position.y = (this.height / 2) - this.piece_radius;
         this.ball.position.x = (this.width / 2) - this.ball.radius;
         this.ball.position.y = (this.height / 2) - this.ball.radius;
@@ -209,127 +254,24 @@ function piece_update() {
     this.div.style.left = this.position.x + "px";
 }
 function ball_update() {
+    if (Math.abs(this.velocity.x) < 0.02) this.velocity.x = 0;
+    if (Math.abs(this.velocity.y) < 0.02) this.velocity.y = 0;
+    if (Math.abs(this.velocity.x) > 0) this.velocity.x = this.velocity.x  / 1.001;
+    if (Math.abs(this.velocity.y ) > 0) this.velocity.y = this.velocity.y  / 1.001;
+    wall_collision(this);
     this.position = this.position.add(this.velocity);
-    if (this.position.y <= 0) {
-        this.position.y = 0;
-        this.velocity.y = -this.velocity.y;
-    }
-    else if (this.position.y + (this.radius * 2) >= Game.height) {
-        this.position.y = Game.height - (this.radius * 2);
-        this.velocity.y = -this.velocity.y;
-    }
-    else if (this.position.x <= 0) {
-        let up = (Game.height / 2) - (Game.blue.goal.height / 2);
-        let down = (Game.height / 2) + (Game.blue.goal.height / 2);
-        if (((this.position.y + this.radius) <= up) || ((this.position.y + this.radius) >= down)) {
-            this.position.x = 0;
-            this.velocity.x = -this.velocity.x;
-        }
-        else {
-            if (this.position.x <= -Game.red.goal.width) { // Goal
-                this.position.x = -Game.red.goal.width;
-                this.velocity.x = 0;
-                this.velocity.y = 0;
-                goal("red");
-            }
-            else {
-                let x = 0;
-                let y1 = -(Game.blue.goal.height / 2);
-                let y2 = (Game.height / 2) + (Game.blue.goal.height / 2);
-                let xm = this.position.x + this.radius;
-                let ym = this.position.y + this.radius;
-                if (((Math.sqrt(((xm - x) ** 2) + ((ym - y1) ** 2)) <= this.radius) && (xm <= 0)) || ((Math.sqrt(((xm - x) ** 2) + ((ym - y2) ** 2)) <= this.radius) && (xm <= 0))) {
-                    this.velocity.x = -this.velocity.x;
-                }
-                if (this.position.y <= (Game.height / 2) - (Game.blue.goal.height / 2)) {
-                    this.velocity.y = -this.velocity.y;
-                    this.position.y = (Game.height / 2) - (Game.blue.goal.height / 2);
-                }
-                else if (this.position.y >= (Game.height / 2) + (Game.blue.goal.height / 2)) {
-                    this.velocity.y = -this.velocity.y;
-                    this.position.y = (Game.height / 2) + (Game.blue.goal.height / 2);
-                }
-            }
-        }
-    }
-    else if (this.position.x + (this.radius * 2) >= Game.width) {
-        let up = (Game.height / 2) - (Game.red.goal.height / 2);
-        let down = (Game.height / 2) + (Game.red.goal.height / 2);
-        if (((this.position.y + this.radius) <= up) || ((this.position.y + this.radius) >= down)) {
-            this.position.x = (Game.width - (this.radius * 2));
-            this.velocity.x = -this.velocity.x;
-        }
-        else {
-            if (this.position.x + (2 * this.radius) >= Game.width + Game.red.goal.width) {
-                this.position.x = Game.width + Game.red.goal.width - (2 * this.radius);
-                this.velocity.x = 0;
-                this.velocity.y = 0;
-                goal("blue");
-            }
-            else {
-                let x = Game.width;
-                let y1 = (Game.height / 2) - (Game.red.goal.height / 2);
-                let y2 = (Game.height / 2) + (Game.red.goal.height / 2);
-                let xm = this.position.x + this.radius;
-                let ym = this.position.y + this.radius;
-                if (((Math.sqrt(((xm - x) ** 2) + ((ym - y1) ** 2)) <= this.radius) && (xm >= Game.width)) || ((Math.sqrt(((xm - x) ** 2) + ((ym - y2) ** 2)) <= this.radius) && xm <= Game.width)) {
-                    this.velocity.x = -this.velocity.x;
-                }
-                if (this.position.y <= (Game.height / 2) - (Game.blue.goal.height / 2)) {
-                    this.velocity.y = -this.velocity.y;
-                    this.position.y = (Game.height / 2) - (Game.blue.goal.height / 2);
-                }
-                else if (this.position.y >= (Game.height / 2) + (Game.blue.goal.height / 2)) {
-                    this.velocity.y = -this.velocity.y;
-                    this.position.y = (Game.height / 2) + (Game.blue.goal.height / 2);
-                }
-            }
-        }
-    }
     this.div.style.top = this.position.y + "px";
     this.div.style.left = this.position.x + "px";
 }
 function blue_collision_check() {
-    // wall
-    if (this.position.y <= 0) {
-        this.position.y = 0;
-        this.velocity.y = 0;
-    }
-    if (this.position.y + (this.radius * 2) >= Game.height) {
-        this.position.y = Game.height - (this.radius * 2);
-        this.velocity.y = 0;
-    }
-    if (this.position.x <= 0) {
-        this.position.x = 0;
-        this.velocity.x = 0;
-    }
-    if (this.position.x + (this.radius * 2) >= (Game.width / 2) - 2.5) {
-        this.position.x = ((Game.width / 2) - (this.radius * 2)) - 2.5;
-        this.velocity.x = 0;
-    }
+    wall_collision(this);
     // ball
     let dx = (this.position.x + this.radius) - (Game.ball.position.x + Game.ball_radius);
     let dy = (this.position.y + this.radius) - (Game.ball.position.y + Game.ball_radius);
     if (Math.sqrt((dx ** 2) + (dy ** 2)) <= this.radius + Game.ball.radius) ball_collision(this);
 }
 function red_collision_check() {
-    // wall
-    if (this.position.y <= 0) {
-        this.position.y = 0;
-        this.velocity.y = 0;
-    }
-    if (this.position.y + (this.radius * 2) >= Game.height) {
-        this.position.y = Game.height - (this.radius * 2);
-        this.velocity.y = 0;
-    }
-    if (this.position.x <= (Game.width / 2) + 2.5) {
-        this.position.x = (Game.width / 2) + 2.5;
-        this.velocity.x = 0;
-    }
-    if (this.position.x + (this.radius * 2) >= Game.width) {
-        this.position.x = Game.width - (this.radius * 2);
-        this.velocity.x = 0;
-    }
+    wall_collision(this);
     // ball
     let dx = (this.position.x + this.radius) - (Game.ball.position.x + Game.ball_radius);
     let dy = (this.position.y + this.radius) - (Game.ball.position.y + Game.ball_radius);
@@ -365,6 +307,110 @@ function ball_collision(piece) {
         let correction = unit_normal.multiply(overlap / 2 + 0.5);
         piece.position = piece.position.add(correction);
         ball.position = ball.position.subtract(correction);
+    }
+}
+function wall_collision(other) {
+    if (other.position.y <= 0) { // Horizontal Wall
+        other.position.y = 0;
+        other.velocity.y = (other == Game.ball) ? -other.velocity.y : 0;
+    }
+    else if (other.position.y + (other.radius * 2) >= Game.height) {
+        other.position.y = Game.height - (other.radius * 2);
+        other.velocity.y = (other == Game.ball) ? -other.velocity.y : 0;
+    }
+    switch (other) { // Vertival Wall
+        case Game.ball :
+            if (other.position.x <= 0) { // Left Wall
+                let center_x = other.position.x + other.radius;
+                let center_y = other.position.y + other.radius;
+                let goal_top = (Game.height - Game.blue.goal.height) / 2;
+                let goal_bottom = Game.height - goal_top;
+                let closest_x1 = Math.max(-50, Math.min(0, center_x));
+                let closest_y1 = Math.max(0, Math.min(goal_top, center_y));
+                let dx1 = center_x - closest_x1;
+                let dy1 = center_y - closest_y1;
+                let distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+                if (distance1 <= other.radius) {
+                    let normal = new Vector(dx1, dy1).unit();
+                    let dot = other.velocity.x * normal.x + other.velocity.y * normal.y;
+                    other.velocity.x -= 2 * dot * normal.x;
+                    other.velocity.y -= 2 * dot * normal.y;
+                }
+                else {
+                    let closest_x2 = Math.max(-50, Math.min(0, center_x));
+                    let closest_y2 = Math.max(goal_bottom, Math.min(Game.height, center_y));
+                    let dx2 = center_x - closest_x2;
+                    let dy2 = center_y - closest_y2;
+                    let distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                    if (distance2 <= other.radius) {
+                        let normal = new Vector(dx2, dy2).unit();
+                        let dot = other.velocity.x * normal.x + other.velocity.y * normal.y;
+                        other.velocity.x -= 2 * dot * normal.x;
+                        other.velocity.y -= 2 * dot * normal.y;
+                    }
+                }
+                if (other.position.x <= -50) {
+                    other.position.x = -50;
+                    other.velocity.x = 0;
+                    goal("red");
+                }
+            }
+            else if (other.position.x + (other.radius * 2) >= Game.width) { // Right Wall
+                let center_x = other.position.x + other.radius;
+                let center_y = other.position.y + other.radius;
+                let goal_top = (Game.height - Game.blue.goal.height) / 2;
+                let goal_bottom = Game.height - goal_top;
+                let closest_x1 = Math.max(Game.width, Math.min(Game.width + 50, center_x));
+                let closest_y1 = Math.max(0, Math.min(goal_top, center_y));
+                let dx1 = center_x - closest_x1;
+                let dy1 = center_y - closest_y1;
+                let distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+                if (distance1 <= other.radius) {
+                    let normal = new Vector(dx1, dy1).unit();
+                    let dot = other.velocity.x * normal.x + other.velocity.y * normal.y;
+                    other.velocity.x -= 2 * dot * normal.x;
+                    other.velocity.y -= 2 * dot * normal.y;
+                }
+                else {
+                    let closest_x2 = Math.max(Game.width, Math.min(Game.width + 50, center_x));
+                    let closest_y2 = Math.max(goal_bottom, Math.min(Game.height, center_y));
+                    let dx2 = center_x - closest_x2;
+                    let dy2 = center_y - closest_y2;
+                    let distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                    if (distance2 <= other.radius) {
+                        let normal = new Vector(dx2, dy2).unit();
+                        let dot = other.velocity.x * normal.x + other.velocity.y * normal.y;
+                        other.velocity.x -= 2 * dot * normal.x;
+                        other.velocity.y -= 2 * dot * normal.y;
+                    }
+                }
+                if (other.position.x + (other.radius * 2) >= Game.width + 50) {
+                    other.position.x = Game.width + 50 - (other.radius * 2);
+                    other.velocity.x = 0;
+                    goal("blue");
+                }
+            }    
+            break;
+        case Game.blue :
+            if (other.position.x <= 0) {
+                other.position.x = 0;
+                other.velocity.x = 0;
+            }
+            if (other.position.x + (other.radius * 2) >= (Game.width / 2) - 2.5) {
+                other.position.x = ((Game.width / 2) - (other.radius * 2)) - 2.5;
+                other.velocity.x = 0;
+            }
+            break;
+        case Game.red :
+            if (other.position.x <= (Game.width / 2) + 2.5) {
+                other.position.x = (Game.width / 2) + 2.5;
+                other.velocity.x = 0;
+            }
+            if (other.position.x + (other.radius * 2) >= Game.width) {
+                other.position.x = Game.width - (other.radius * 2);
+                other.velocity.x = 0;
+            }
+            break;
     }
 }
 document.addEventListener("visibilitychange", function() {

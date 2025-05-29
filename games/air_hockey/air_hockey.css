@@ -21,14 +21,25 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+#center-circle {
+    width: 170px;
+    height: 170px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid black;
+    border-radius: 50%;
+}
 #game-div > div {
     position: absolute;
-    color: #fff;
+}
+.piece {
     box-shadow: -5px -5px 8px rgba(0, 0, 0, 0.4) inset;
+    z-index: 1;
 }
 #blue-goal, #red-goal {
     position: absolute;
-    width: 45px;
     border-width: 5px;
     border-style: solid;
     top: 50%;
@@ -36,7 +47,9 @@
 }
 #blue-goal {
     right: 100%;
+    border-radius: 10px 0 0 10px;
 }
 #red-goal {
     left: 100%;
+    border-radius: 0 10px 10px 0;
 }

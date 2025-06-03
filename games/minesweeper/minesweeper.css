@@ -150,10 +150,10 @@
     background-repeat: no-repeat;
 }
 .f-img {
-    background-image: url(image/flag.png);
+    background-image: url(../../image/minesweeper/flag.png);
 }
 .b-img {
-    background-image: url(image/bomb.png);
+    background-image: url(../../image/minesweeper/bomb.png);
 }
 .f-num, .b-num {
     width: 30%;

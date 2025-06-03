@@ -9,10 +9,10 @@ window.onload = function() {
     for (let a = 0 ; a < Games.length ; a++) {
         let [div, div_relative, name] = [document.createElement("div"),document.createElement("div"),document.createElement("div")];
         game_list.appendChild(div);
-        // div_relative.style.backgroundImage = "url(../image/" + Games[a].image_url + ")";
-        // div.onclick = function() {
-        //     window.location.href = "games/" Games[a].url + ".html";
-        // }
+        div_relative.style.backgroundImage = "url(../image/" + Games[a].image_url + ")";
+        div.onclick = function() {
+            window.location.href = "games/" + Games[a].url + ".html";
+        }
         div.appendChild(div_relative);
         name.innerHTML = Games[a].name;
         name.classList.add("game-name");

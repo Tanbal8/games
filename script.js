@@ -15,6 +15,7 @@ window.onload = function() {
         // }
         div.appendChild(div_relative);
         name.innerHTML = Games[a].name;
+        name.classList.add("game-name");
         name.onclick = function() {
             window.location.href = "games/" + Games[a].url + ".html";
         }

@@ -1,7 +1,7 @@
 body {
     background-color: rgba(157, 248, 255, 0.8);
 }
-.game-list {
+#game-list {
     width: fit-content;
     max-width: 80%;
     padding: 40px;
@@ -15,14 +15,14 @@ body {
     margin: 30px auto 0;
     box-shadow: 4px 4px 4px #777;
 }
-.game-list > div {
+#game-list > div {
     width: 150px;
     height: 120px;
     background-color: aqua;
     border: 1px solid black;
     border-radius: 10px;
 }
-.game-list > div > div {
+#game-list > div > div {
     width: 100%;
     height: 100%;
     position: relative;

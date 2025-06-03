@@ -1,0 +1,43 @@
+body {
+    background-color: rgba(157, 248, 255, 0.8);
+}
+.game-list {
+    width: fit-content;
+    max-width: 80%;
+    padding: 40px;
+    border-radius: 20px;
+    background-color: chartreuse;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    row-gap: 60px;
+    column-gap: 50px;
+    padding-bottom: 40px;
+    margin: 30px auto 0;
+    box-shadow: 4px 4px 4px #777;
+}
+.game-list > div {
+    width: 150px;
+    height: 120px;
+    background-color: aqua;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.game-list > div > div {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+.game-name {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-family: arial;
+    text-align: center;
+    text-wrap: nowrap;
+    padding-top: 5px;
+    cursor: pointer;
+}

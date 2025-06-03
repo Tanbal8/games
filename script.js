@@ -2,7 +2,7 @@ var game_list = document.getElementById("game-list");
 const Games = [
     {name: "minesweeper", url: "minesweeper/minesweeper", image_url: "bomb/bomb.png"},
     {name: "XO", url: "xo/xo", image_url: ""},
-    {name: "Sudoku", url: "sudoku", image_url: ""},
+    {name: "Sudoku", url: "sudoku/sudoku", image_url: ""},
     {name: "2048", url: "2048/2048", image_url: ""}
 ];
 window.onload = function() {

@@ -93,6 +93,8 @@ var Game = {
     goal_height: 200,
     piece_start_space: 20,
     first: true,
+    goal_delay: {timer: new Timer(), check: false},
+    start_delay: {timer: new Timer(), check: false},
     start: function() {
         this.check = true;
         this.width = this.div.offsetWidth;

@@ -1,0 +1,56 @@
+*::selection {
+    background-color: transparent;
+}
+body {
+    margin: 0;
+}
+.game-page {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+.game-div {
+    width: 450px;
+    height: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #bababa;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-rows: 25% 25% 25% 25%;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+}
+.game-div > div {
+    background-color: rgb(244, 244, 244);
+    margin: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    font-family: arial;
+}
+.animation-div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.animation-div1 {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.animation {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    font-family: arial;
+    transition: 0.11s ease;
+}

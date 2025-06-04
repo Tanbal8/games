@@ -14,10 +14,11 @@
     font-family: vazir;
     src: url(../../font/persian/Vazir.ttf);
 }
-*::selection {
-    background-color: transparent;
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 body {
+    user-select: none;
     background-color: #313131;
     margin: 0;
 }

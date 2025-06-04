@@ -6,8 +6,11 @@
     font-family: consola;
     src: url(../../font/english/CONSOLA.TTF);
 }
-*::selection {
-    background-color: transparent;
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+    user-select: none;
 }
 .kol {
     position: absolute;

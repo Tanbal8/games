@@ -13,15 +13,11 @@ function all_function() {
         let div = document.createElement("div");
         game_div.appendChild(div);
         let x = (a + 1) % 4;
-        if (x == 0) {
-            x = 4;
-        }
+        if (x == 0) x = 4;
         let y = (16 - a + x - 1) / 4;
-        let type = "empty";
-        let value = 0;
         let x_position = div.offsetLeft;
         let y_position = div.offsetTop;
-        all.push({x: x, y: y, type: type, value: value, div: div, x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
+        all.push({x: x, y: y, div: div, type: "empty", value: 0, x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
     }
 }
 function start_game() {
@@ -46,7 +42,6 @@ window.ontouchend =  function(e) {
     for (let a = 0 ; a < 16 ; a++)
         all[a].changeable = true;
     if (Math.abs(dx) > Math.abs(dy)) {
-        // حرکت افقی
         if (dx > 30) right();
         else if (dx < -30) left();
     } 
@@ -148,7 +143,7 @@ function left() {
                                     if (all[a].value == all[b].value && all[b].changeable)
                                         double_function(a, b);
                                     else if (empty_array.length != 0)
-                                            target_function(all[a], empty_array);
+                                        target_function(all[a], empty_array);
                                     break;
                                 }
                 }
@@ -263,57 +258,42 @@ function background_function(div, value) {
 function add() {
     let n = Math.floor(Math.random() * 16);
     if (all[n].type == "empty") {
-        let number;
         let chance = 12;
         let random = Math.floor((Math.random() * chance) + 1);
-        if (random < chance) {
-            number = 2;
-        }
-        else {
-            number = 4;
-        }
+        let number = (random < chance) ? 2 : 4;
         all[n].type = "number";
         all[n].value = number;
         all[n].div.innerHTML = number;
         background_function(all[n].div, number);
         let empty_length = 0;
-        for (let a = 0 ; a < 16 ; a++) {
-            if (all[a].type == "empty") {
+        for (let a = 0 ; a < 16 ; a++)
+            if (all[a].type == "empty")
                 empty_length++;
-            }
-        }
         if (empty_length == 0) {
             let check = true;
-            for (let a = 0 ; a < 16 ; a++) {
-                for (let b = 0 ; b < 16 ; b++) {
-                    if ((all[a].x == all[b].x && all[a].y + 1 == all[b].y) || (all[a].x - 1 == all[b].x && all[a].y == all[b].y) || (all[a].x + 1 == all[b].x && all[a].y == all[b].y) || (all[a].x == all[b].x && all[a].y - 1 == all[b].y)) {
+            for (let a = 0 ; a < 16 ; a++)
+                for (let b = 0 ; b < 16 ; b++)
+                    if ((all[a].x == all[b].x && all[a].y + 1 == all[b].y) || (all[a].x - 1 == all[b].x && all[a].y == all[b].y) || (all[a].x + 1 == all[b].x && all[a].y == all[b].y) || (all[a].x == all[b].x && all[a].y - 1 == all[b].y))
                         if (all[a].value == all[b].value) {
                             check = false;
+                            break;
                         }
-                    }
-                }
-            }
             if (check) {
-                console.log("game over");
-                // if (confirm("Game Over!\nrestart ?")) {
-                //     start_game();
-                // }
+                if (confirm("Game Over!\nrestart ?"))
+                    start_game();
             }
         }
     }
-    else {
-        add();
-    }
+    else add();
 }
 let startY = 0;
 window.addEventListener('touchstart', function (e) {
-  if (e.touches.length !== 1) return; // فقط یک انگشت
+  if (e.touches.length !== 1) return;
   startY = e.touches[0].clientY;
 }, { passive: true });
 window.addEventListener('touchmove', function (e) {
   const currentY = e.touches[0].clientY;
   const isPullingDown = currentY > startY;
-  if (window.scrollY === 0 && isPullingDown&& e.cancelable) {
+  if (window.scrollY === 0 && isPullingDown&& e.cancelable)
     e.preventDefault();
-  }
 }, { passive: false });

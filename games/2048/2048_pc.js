@@ -248,45 +248,31 @@ function background_function(div, value) {
 function add() {
     let n = Math.floor(Math.random() * 16);
     if (all[n].type == "empty") {
-        let number;
         let chance = 12;
         let random = Math.floor((Math.random() * chance) + 1);
-        if (random < chance) {
-            number = 2;
-        }
-        else {
-            number = 4;
-        }
+        let number = (random < chance) ? 2 : 4;
         all[n].type = "number";
         all[n].value = number;
         all[n].div.innerHTML = number;
         background_function(all[n].div, number);
         let empty_length = 0;
-        for (let a = 0 ; a < 16 ; a++) {
-            if (all[a].type == "empty") {
+        for (let a = 0 ; a < 16 ; a++)
+            if (all[a].type == "empty")
                 empty_length++;
-            }
-        }
         if (empty_length == 0) {
             let check = true;
-            for (let a = 0 ; a < 16 ; a++) {
-                for (let b = 0 ; b < 16 ; b++) {
-                    if ((all[a].x == all[b].x && all[a].y + 1 == all[b].y) || (all[a].x - 1 == all[b].x && all[a].y == all[b].y) || (all[a].x + 1 == all[b].x && all[a].y == all[b].y) || (all[a].x == all[b].x && all[a].y - 1 == all[b].y)) {
+            for (let a = 0 ; a < 16 ; a++)
+                for (let b = 0 ; b < 16 ; b++)
+                    if ((all[a].x == all[b].x && all[a].y + 1 == all[b].y) || (all[a].x - 1 == all[b].x && all[a].y == all[b].y) || (all[a].x + 1 == all[b].x && all[a].y == all[b].y) || (all[a].x == all[b].x && all[a].y - 1 == all[b].y))
                         if (all[a].value == all[b].value) {
                             check = false;
+                            break;
                         }
-                    }
-                }
-            }
             if (check) {
-                console.log("game over");
-                // if (confirm("Game Over!\nrestart ?")) {
-                //     start_game();
-                // }
+                if (confirm("Game Over!\nrestart ?"))
+                    start_game();
             }
         }
     }
-    else {
-        add();
-    }
+    else add();
 }

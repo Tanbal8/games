@@ -67,7 +67,7 @@ class Timer {
                     this.minute--;
                 }
             }
-            if (this.minute <= 0 && this.second <= 0 && this.centi_second <= 0) {
+            if ((this.minute == 0 && this.second == 0 && this.centi_second == 0) || (this.minute < 0 || this.second < 0 || this.centi_second < 0)) {
                 this.end();
                 this.stop();
             }
@@ -76,11 +76,8 @@ class Timer {
     stop() {
         clearInterval(this.interval)
     }
-    end() {
-        console.log("Timer Ended");
-    }
     to_string() {
-        return this.minute + " : " + this.second + " : " + this.centi_second;
+        return ((this.minute < 10) ? "0" + this.minute : this.minute)  + " : " + ((this.second < 10) ? "0" + this.second : this.second) + " : " + ((this.centi_second < 10) ? "0" + this.centi_second : this.centi_second);
     }
 }
 var Game = {
@@ -93,6 +90,8 @@ var Game = {
     goal_height: 200,
     piece_start_space: 20,
     first: true,
+    min_speed: 0.03,
+    friction: 1.0012,
     goal_delay: {timer: new Timer(), check: false},
     start_delay: {timer: new Timer(), check: false},
     start: function() {
@@ -139,11 +138,17 @@ var Game = {
             this.blue.move[key] = false;
             this.red.move[key] = false;
         }
+        if (this.goal_delay.check) this.goal_delay.timer.stop();
+        else if (this.start_delay.check) this.start_delay.timer.stop();
     },
     continue: function() {
-        this.check = 1;
         this.stop_check = 0;
-        this.interval();
+        if (this.goal_delay.check) this.goal_delay.timer.start();
+        else if (this.start_delay.check) this.start_delay.timer.start();
+        if (!this.goal_delay.check) {
+            this.check = 1;
+            if (!this.start_delay.check) this.interval();
+        }
     },
     restart: function() {},
     interval: function() {
@@ -167,21 +172,36 @@ var Game = {
         this.blue.div.style.left = this.blue.position.x + "px";
         this.red.div.style.top = this.red.position.y + "px";
         this.red.div.style.left = this.red.position.x + "px";
+        let direction_x;
+        if (this.first) {
+            direction_x = ((Math.floor(Math.random() * 2)) ? 1 : -1);
+        }
+        else {
+            //
+            direction_x = ((Math.floor(Math.random() * 2)) ? 1 : -1);
+        }
         let degree = Math.floor(Math.random() * (2 * this.ball.start_max_degree)) - this.ball.start_max_degree;
         let radiant = degree / 180 * Math.PI;
         Game.ball.velocity.x = Game.ball.speed * Math.cos(radiant);
         Game.ball.velocity.y = Game.ball.speed * Math.sin(radiant);
-        Game.ball.velocity.x *= -1;
-        setTimeout(() => {
-            Game.interval();
-        }, 1000);
+        Game.ball.velocity.x *= direction_x;
+        Game.start_delay.check = true;
+        Game.start_delay.timer.set(0, 1, 0);
+        Game.start_delay.timer.start();
     }
+}
+Game.goal_delay.timer.end = function() {
+    Game.goal_delay.check = false;
+    Game.reset();
+}
+Game.start_delay.timer.end = function() {
+    Game.start_delay.check = false;
+    Game.interval();
 }
 window.onload = function() {
     Game.start();
 }
 window.onkeydown = function(e) {
-    
     switch (e.key) {
         case Game.blue.direction_key.up :
             if (Game.check) Game.blue.move.up = true;
@@ -208,7 +228,7 @@ window.onkeydown = function(e) {
             if (Game.check) Game.red.move.left = true;
             break;
         case "Escape" :
-            if (Game.check) Game.stop();
+            if ((Game.check || Game.start_delay.check || Game.goal_delay.check) && !Game.stop_check) Game.stop();
             break;
         case "Enter" :
             if (Game.stop_check) Game.continue();
@@ -256,10 +276,10 @@ function piece_update() {
     this.div.style.left = this.position.x + "px";
 }
 function ball_update() {
-    if (Math.abs(this.velocity.x) < 0.02) this.velocity.x = 0;
-    if (Math.abs(this.velocity.y) < 0.02) this.velocity.y = 0;
-    if (Math.abs(this.velocity.x) > 0) this.velocity.x = this.velocity.x  / 1.001;
-    if (Math.abs(this.velocity.y ) > 0) this.velocity.y = this.velocity.y  / 1.001;
+    if (Math.abs(this.velocity.x) < Game.min_speed) this.velocity.x = 0;
+    if (Math.abs(this.velocity.y) < Game.min_speed) this.velocity.y = 0;
+    if (Math.abs(this.velocity.x) > 0) this.velocity.x = this.velocity.x  / Game.friction;
+    if (Math.abs(this.velocity.y ) > 0) this.velocity.y = this.velocity.y  / Game.friction;
     wall_collision(this);
     this.position = this.position.add(this.velocity);
     this.div.style.top = this.position.y + "px";
@@ -306,7 +326,7 @@ function ball_collision(piece) {
         piece.velocity = v1_n_vector.add(v1_t_vector);
         ball.velocity = v2_n_vector.add(v2_t_vector).multiply(Game.ball.speed_factor);
         let overlap = (piece.radius + ball.radius) - distance;
-        let correction = unit_normal.multiply(overlap / 2 + 0.5);
+        let correction = unit_normal.multiply(overlap / 2 + 0.75);
         piece.position = piece.position.add(correction);
         ball.position = ball.position.subtract(correction);
     }
@@ -415,9 +435,13 @@ function wall_collision(other) {
             break;
     }
 }
-document.addEventListener("visibilitychange", function() {
-    if (document.visibilityState === "hidden") Game.stop();
-});
+window.onblur = function() { // User Left The Page
+    Game.stop();
+    for (let key in Game.blue.move) {
+        Game.blue.move[key] = false;
+        Game.red.move[key] = false;
+    }
+}
 function goal(color) {
     switch (color) {
         case "blue" :
@@ -427,10 +451,11 @@ function goal(color) {
             Game.red.score++;
             break;
     }
-    console.clear();
+    if (Game.first) Game.first = false;
+    // console.clear();
     console.log("blue " + Game.blue.score + " - " + Game.red.score + " red");
-    setTimeout(() => {
-        Game.reset();
-    }, 1000);
+    Game.goal_delay.check = true;
+    Game.goal_delay.timer.set(0, 1, 0);
+    Game.goal_delay.timer.start();
     Game.check = 0;
 }

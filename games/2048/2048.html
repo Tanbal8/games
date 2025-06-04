@@ -7,31 +7,15 @@
 </head>
 <body>
     <div class="game-page">
-        <div class="game-div">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <span class="animation-div">
-                <div class="animation-div1"></div>
+        <div id="game-div">
+            <span id="animation-div">
+                <div id="animation-div1"></div>
             </span>
         </div>
     </div>
     <script>
         var js_file = document.createElement("script");
-        if (window.innerWidth <= 768) js_file.src = "2048_fphone.js";
+        if (window.innerWidth <= 768) js_file.src = "2048_phone.js";
         else js_file.src = "2048_pc.js";
         document.body.appendChild(js_file);
     </script>

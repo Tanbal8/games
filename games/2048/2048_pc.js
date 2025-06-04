@@ -1,22 +1,23 @@
-var all_div = document.querySelectorAll(".game-div > div");
-var animation_div = document.querySelector(".animation-div1");
+var animation_div = document.getElementById("animation-div1");
+var game_div = document.getElementById("game-div");
 var all = [];
 var changeable = true;
 var move_check = false;
 all_function();
 start_game();
 function all_function() {
+    var all_div = document.querySelectorAll("#game-div > div");
     for (let a = 0 ; a < 16 ; a++) {
         let x = (a + 1) % 4;
-        if (x == 0) {
-            x = 4;
-        }
+        if (x == 0) x = 4;
         let y = (16 - a + x - 1) / 4;
         let type = "empty";
         let value = 0;
-        let x_position = all_div[a].offsetLeft;
-        let y_position = all_div[a].offsetTop;
-        all.push({x: x, y: y, type: type, value: value, div: all_div[a], x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
+        let div = document.createElement("div");
+        game_div.appendChild(div);
+        let x_position = div.offsetLeft;
+        let y_position = div.offsetTop;
+        all.push({x: x, y: y, div: div, type: type, value: value, x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
     }
 }
 function start_game() {

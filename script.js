@@ -3,7 +3,8 @@ const Games = [
     {name: "minesweeper", url: "minesweeper/minesweeper", image_url: "bomb/bomb.png"},
     {name: "XO", url: "xo/xo", image_url: ""},
     {name: "Sudoku", url: "sudoku/sudoku", image_url: ""},
-    {name: "2048", url: "2048/2048", image_url: ""}
+    {name: "2048", url: "2048/2048", image_url: ""},
+    {name: "Number Puzzle", url: "number_puzzle/number_puzzle", image_url: ""}
 ];
 window.onload = function() {
     for (let a = 0 ; a < Games.length ; a++) {

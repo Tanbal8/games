@@ -305,10 +305,10 @@ function add() {
         add();
     }
 }
-document.body.addEventListener("touchmove", function(e) {
-    e.preventDefault(); // جلوگیری از scroll یا pull-to-refresh
+window.addEventListener("touchmove", function(e) {
+    e.preventDefault();
 }, { passive: false });
 
-document.body.addEventListener("touchstart", function(e) {
-    e.preventDefault(); // جلوگیری از انتخاب متن یا سایر رفتارهای پیش‌فرض
+window.addEventListener("touchstart", function(e) {
+    e.preventDefault();
 }, { passive: false });

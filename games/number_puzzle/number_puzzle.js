@@ -128,59 +128,6 @@ function start_game() {
         }
     }, 1000);
 }
-for (let a = 0 ; a < 16 ; a++) {
-    all[a].div.onclick = function() {
-        if (all[a].type == "number" && changeable) {
-            let select_x = all[a].x;
-            let select_y = all[a].y;
-            let empty_x;
-            let empty_y;
-            for (let b = 0 ; b < 16 ; b++) {
-                if (all[b].type == "empty") {
-                    empty_x = all[b].x;
-                    empty_y = all[b].y;
-                    if (select_x == empty_x) {
-                        if (select_y > empty_y) {
-                            for (let c = b ; c > a ; c -= 4) {
-                                move_function(all[c - 4], all[c]);
-                            }
-                        }
-                        else if (select_y < empty_y) {
-                            for (let c = b ; c < a ; c += 4) {
-                                move_function(all[c+4], all[c]);
-                            }
-                        }
-                    }
-                    if (select_y == empty_y) {
-                        if (select_x > empty_x) {
-                            for (let c = b ; c < a ; c++) {
-                                move_function(all[c+1], all[c]);
-                            }
-                        }
-                        else if (select_x < empty_x) {
-                            for (let c = b ; c > a ; c--) {
-                                move_function(all[c-1], all[c]);
-                            }
-                        }
-
-                    }
-                }
-            }
-            let end_check = true;
-            for (let c = 0 ; c < 15 ; c++) {
-                if (all[c].value != c + 1) {
-                    end_check = false;
-                }
-            }
-            if (end_check) {
-                clearInterval(timer);
-                if(confirm(timer_m + " : " + timer_s + "\n" + "restart ?")) {
-                    start_game();
-                }
-            }
-        }
-    }
-}
 function move_function(object1, object2) {
     changeable = false;
     setTimeout(function() {

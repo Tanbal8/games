@@ -1,4 +1,8 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 body {
+    user-select: none;
     background-color: rgba(157, 248, 255, 0.8);
 }
 #game-list {

@@ -209,10 +209,10 @@ body {
     background-repeat: no-repeat;
 }
 .bomb-img {
-    background-image: url(image/bomb.png);
+    background-image: url(../../image/minesweeper/bomb.png);
 }
 .flag-img {
-    background-image: url(image/flag.png);
+    background-image: url(../../image/minesweeper/flag.png);
 }
 .restart {
     width: 100%;

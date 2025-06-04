@@ -3,6 +3,7 @@
 }
 body {
     margin: 0;
+    overflow: hidden;
 }
 .game-page {
     width: 100vw;

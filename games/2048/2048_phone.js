@@ -305,10 +305,15 @@ function add() {
         add();
     }
 }
-window.addEventListener("touchmove", function(e) {
+let startY = 0;
+window.addEventListener('touchstart', function (e) {
+  if (e.touches.length !== 1) return; // فقط یک انگشت
+  startY = e.touches[0].clientY;
+}, { passive: true });
+window.addEventListener('touchmove', function (e) {
+  const currentY = e.touches[0].clientY;
+  const isPullingDown = currentY > startY;
+  if (window.scrollY === 0 && isPullingDown&& e.cancelable) {
     e.preventDefault();
-}, { passive: false });
-
-window.addEventListener("touchstart", function(e) {
-    e.preventDefault();
+  }
 }, { passive: false });

@@ -16,7 +16,6 @@
     </div>
     <script>
         var js_file = document.createElement("script");
-        console.log(window.innerWidth);
         if (window.innerWidth <= 768) js_file.src = "2048_phone.js";
         else js_file.src = "2048_pc.js";
         document.body.appendChild(js_file);

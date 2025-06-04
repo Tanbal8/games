@@ -5,9 +5,7 @@ var changeable = true;
 var timer;
 // var timer_s_div = document.querySelector("");
 // var timer_s_div = document.querySelector("");
-var timer_m;
-var timer_s;
-var timer_m;
+var timer_m, timer_s;
 var rowAndColumnNum = 4;
 start_game();
 function all_function() {
@@ -112,19 +110,13 @@ function start_game() {
             }
         }
     }
-    timer_s = "00";
-    timer_m = "00";
+    timer_s = 0;
+    timer_m = 0;
     timer = setInterval(function() {
         timer_s++;
-        if (timer_s < 10) {
-            timer_s = "0" + timer_s;
-        }
         if (timer_s >= 60) {
-            timer_s = "00";
+            timer_s = 0;
             timer_m++;
-            if (timer_m < 10) {
-                timer_m = "0" + timer_m;
-            }
         }
     }, 1000);
 }

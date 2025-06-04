@@ -32,6 +32,7 @@ body {
     align-items: center;
     font-size: 35px;
     font-family: arial;
+    border-radius: 5px;
 }
 #animation-div {
     position: absolute;
@@ -53,4 +54,23 @@ body {
     font-size: 35px;
     font-family: arial;
     transition: 0.11s ease;
+    border-radius: 5px;
+}
+@media only screen and (max-width: 768px) {
+    #game-div {
+        width: 300px;
+        height: 300px;
+        padding: 6px;
+        border-radius: 8px;
+    }
+    #game-div > div {
+        margin: 5px;
+        font-size: 25px;
+        border-radius: 4px;
+    }
+    .animation {
+        font-size: 25px;
+        transition: 0.11s ease;
+        border-radius: 4px;
+    }
 }

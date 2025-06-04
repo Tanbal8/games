@@ -1,12 +1,17 @@
-var all_div = document.querySelectorAll(".game-div > div");
-var animation_div = document.querySelector(".animation-div1");
+var game_div = document.getElementById("game-div");
+var animation_div = document.getElementById("animation-div1");
 var all = [];
 var changeable = true;
 var move_check = false;
+var move_size = 30;
+let touch_start_x;
+let touch_start_y;
 all_function();
 start_game();
 function all_function() {
     for (let a = 0 ; a < 16 ; a++) {
+        let div = document.createElement("div");
+        game_div.appendChild(div);
         let x = (a + 1) % 4;
         if (x == 0) {
             x = 4;
@@ -14,9 +19,9 @@ function all_function() {
         let y = (16 - a + x - 1) / 4;
         let type = "empty";
         let value = 0;
-        let x_position = all_div[a].offsetLeft;
-        let y_position = all_div[a].offsetTop;
-        all.push({x: x, y: y, type: type, value: value, div: all_div[a], x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
+        let x_position = div.offsetLeft;
+        let y_position = div.offsetTop;
+        all.push({x: x, y: y, type: type, value: value, div: div, x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
     }
 }
 function start_game() {
@@ -29,163 +34,125 @@ function start_game() {
     add();
     add();
 }
-window.onkeydown = function(e) {
-    for (let a = 0 ; a < 16 ; a++) {
+window.ontouchstart = function(e) {
+    touch_start_x = e.changedTouches[0].screenX;
+    touch_start_y = e.changedTouches[0].screenY;
+}
+window.ontouchend =  function(e) {
+    let touch_end_x = e.changedTouches[0].screenX;
+    let touch_end_y = e.changedTouches[0].screenY;
+    let dx = touch_end_x - touch_start_x;
+    let dy = touch_end_y - touch_start_y;
+    for (let a = 0 ; a < 16 ; a++)
         all[a].changeable = true;
+    if (Math.abs(dx) > Math.abs(dy)) {
+        // حرکت افقی
+        if (dx > 30) right();
+        else if (dx < -30) left();
+    } 
+    else {
+        if (dy > 30) down();
+        else if (dy < -30) up();
     }
-    switch (e.which) {
-        // up
-        case 38 :
-        case 87 :
-            if (changeable) {
-                move_check = false;
-                for (let x = 1 ; x <= 4 ; x++) {
-                    for (let a = 0 ; a < 16 ; a++) {
-                        if (all[a].x == x) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b > -1 ; b--) {
-                                    if (all[b].x == all[a].x && all[b].y > all[a].y) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].y == 4) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+}
+function up() {
+    if (changeable) {
+        move_check = false;
+        for (let x = 1 ; x <= 4 ; x++)
+            for (let a = 0 ; a < 16 ; a++)
+                if (all[a].x == x && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b > -1 ; b--)
+                            if (all[b].x == all[a].x && all[b].y > all[a].y)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].y == 4)
+                                        target_function(all[a], empty_array);
                                 }
-                            }
-                        }
-                    }
-                }
-                move_check_function();
-            }
-            break;    
-        //down
-        case 40 :
-        case 83 :
-            if (changeable) {
-                move_check = false;
-                for (let x = 1 ; x <= 4 ; x++) {
-                    for (let a = 15 ; a > -1 ; a--) {
-                        if (all[a].x == x) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b < 16 ; b++) {
-                                    if (all[b].x == all[a].x && all[b].y < all[a].y) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].y == 1) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                        target_function(all[a], empty_array);
+                                    break;
                                 }
-                            }
-                        }
-                    }
                 }
-                move_check_function()
-            }
-            break;
-        //right
-        case 39 :
-        case 68 :
-            if (changeable) {
-                move_check = false;
-                for (let y = 1 ; y <= 4 ; y++) {
-                    for (let a = 15 ; a > -1 ; a--) {
-                        if (all[a].y == y) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b < 16 ; b++) {
-                                    if (all[b].y == all[a].y && all[b].x > all[a].x) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].x == 4) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+        move_check_function();
+    }
+}
+function down() {
+    if (changeable) {
+        move_check = false;
+        for (let x = 1 ; x <= 4 ; x++)
+            for (let a = 15 ; a > -1 ; a--)
+                if (all[a].x == x && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b < 16 ; b++)
+                            if (all[b].x == all[a].x && all[b].y < all[a].y)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].y == 1)
+                                        target_function(all[a], empty_array);
                                 }
-                            }
-                        }
-                    }
-                }
-                move_check_function()
-            }
-            break;
-        //left
-        case 37 :
-        case 65 :
-            if (changeable) {
-                move_check = false;
-                for (let y = 1 ; y <= 4 ; y++) {
-                    for (let a = 0 ; a < 16 ; a++) {
-                        if (all[a].y == y) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b > -1 ; b--) {
-                                    if (all[b].y == all[a].y && all[b].x < all[a].x) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].x == 1) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
                                 }
-                            }
-                        }
-                    }
+        }
+        move_check_function();
+    }
+}
+function right() {
+    if (changeable) {
+        move_check = false;
+        for (let y = 1 ; y <= 4 ; y++)
+            for (let a = 15 ; a > -1 ; a--)
+                if (all[a].y == y && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b < 16 ; b++)
+                            if (all[b].y == all[a].y && all[b].x > all[a].x)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].x == 4)
+                                        target_function(all[a], empty_array);
+                                }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
+                                }
                 }
-                move_check_function();
-            }
-            break;
+        move_check_function();
+    }
+}
+function left() {
+    if (changeable) {
+        move_check = false;
+        for (let y = 1 ; y <= 4 ; y++)
+            for (let a = 0 ; a < 16 ; a++)
+                if (all[a].y == y && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b > -1 ; b--)
+                            if (all[b].y == all[a].y && all[b].x < all[a].x)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].x == 1)
+                                        target_function(all[a], empty_array);
+                                }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
+                                }
+                }
+        move_check_function();
     }
 }
 function move_check_function() {

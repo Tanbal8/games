@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>2048</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2048</title>
     <link rel="stylesheet" href="2048.css">
 </head>
 <body>
@@ -15,6 +16,7 @@
     </div>
     <script>
         var js_file = document.createElement("script");
+        console.log(window.innerWidth);
         if (window.innerWidth <= 768) js_file.src = "2048_phone.js";
         else js_file.src = "2048_pc.js";
         document.body.appendChild(js_file);

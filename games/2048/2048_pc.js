@@ -1,5 +1,5 @@
-var animation_div = document.getElementById("animation-div1");
 var game_div = document.getElementById("game-div");
+var animation_div = document.getElementById("animation-div1");
 var all = [];
 var changeable = true;
 var move_check = false;
@@ -8,13 +8,13 @@ start_game();
 function all_function() {
     var all_div = document.querySelectorAll("#game-div > div");
     for (let a = 0 ; a < 16 ; a++) {
+        let div = document.createElement("div");
+        game_div.appendChild(div);
         let x = (a + 1) % 4;
         if (x == 0) x = 4;
         let y = (16 - a + x - 1) / 4;
         let type = "empty";
         let value = 0;
-        let div = document.createElement("div");
-        game_div.appendChild(div);
         let x_position = div.offsetLeft;
         let y_position = div.offsetTop;
         all.push({x: x, y: y, div: div, type: type, value: value, x_position: x_position, y_position: y_position, number: a + 1, changeable: true});
@@ -31,162 +31,113 @@ function start_game() {
     add();
 }
 window.onkeydown = function(e) {
-    for (let a = 0 ; a < 16 ; a++) {
+    for (let a = 0 ; a < 16 ; a++)
         all[a].changeable = true;
-    }
     switch (e.which) {
-        // up
-        case 38 :
-        case 87 :
-            if (changeable) {
-                move_check = false;
-                for (let x = 1 ; x <= 4 ; x++) {
-                    for (let a = 0 ; a < 16 ; a++) {
-                        if (all[a].x == x) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b > -1 ; b--) {
-                                    if (all[b].x == all[a].x && all[b].y > all[a].y) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].y == 4) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+        case 38 : case 87 : up(); break;
+        case 40 : case 83 : down(); break;
+        case 39 : case 68 : right(); break;
+        case 37 : case 65 : left(); break;
+    }
+}
+function up() {
+    if (changeable) {
+        move_check = false;
+        for (let x = 1 ; x <= 4 ; x++)
+            for (let a = 0 ; a < 16 ; a++)
+                if (all[a].x == x && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b > -1 ; b--)
+                            if (all[b].x == all[a].x && all[b].y > all[a].y)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].y == 4)
+                                        target_function(all[a], empty_array);
                                 }
-                            }
-                        }
-                    }
-                }
-                move_check_function();
-            }
-            break;    
-        //down
-        case 40 :
-        case 83 :
-            if (changeable) {
-                move_check = false;
-                for (let x = 1 ; x <= 4 ; x++) {
-                    for (let a = 15 ; a > -1 ; a--) {
-                        if (all[a].x == x) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b < 16 ; b++) {
-                                    if (all[b].x == all[a].x && all[b].y < all[a].y) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].y == 1) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                        target_function(all[a], empty_array);
+                                    break;
                                 }
-                            }
-                        }
-                    }
                 }
-                move_check_function()
-            }
-            break;
-        //right
-        case 39 :
-        case 68 :
-            if (changeable) {
-                move_check = false;
-                for (let y = 1 ; y <= 4 ; y++) {
-                    for (let a = 15 ; a > -1 ; a--) {
-                        if (all[a].y == y) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b < 16 ; b++) {
-                                    if (all[b].y == all[a].y && all[b].x > all[a].x) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].x == 4) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+        move_check_function();
+    }
+}
+function down() {
+    if (changeable) {
+        move_check = false;
+        for (let x = 1 ; x <= 4 ; x++)
+            for (let a = 15 ; a > -1 ; a--)
+                if (all[a].x == x && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b < 16 ; b++)
+                            if (all[b].x == all[a].x && all[b].y < all[a].y)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].y == 1)
+                                        target_function(all[a], empty_array);
                                 }
-                            }
-                        }
-                    }
-                }
-                move_check_function()
-            }
-            break;
-        //left
-        case 37 :
-        case 65 :
-            if (changeable) {
-                move_check = false;
-                for (let y = 1 ; y <= 4 ; y++) {
-                    for (let a = 0 ; a < 16 ; a++) {
-                        if (all[a].y == y) {
-                            if (all[a].type == "number") {
-                                let empty_array = [];
-                                for (let b = a ; b > -1 ; b--) {
-                                    if (all[b].y == all[a].y && all[b].x < all[a].x) {
-                                        if (all[b].type == "empty") {
-                                            empty_array.push(all[b]);
-                                            if (all[b].x == 1) {
-                                                target_function(all[a], empty_array);
-                                            }
-                                        }
-                                        else {
-                                            if (all[a].value == all[b].value && all[b].changeable) {
-                                                double_function(a, b);
-                                            }
-                                            else {
-                                                if (empty_array.length != 0) {
-                                                    target_function(all[a], empty_array);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
                                 }
-                            }
-                        }
-                    }
+        }
+        move_check_function();
+    }
+}
+function right() {
+    if (changeable) {
+        move_check = false;
+        for (let y = 1 ; y <= 4 ; y++)
+            for (let a = 15 ; a > -1 ; a--)
+                if (all[a].y == y && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b < 16 ; b++)
+                            if (all[b].y == all[a].y && all[b].x > all[a].x)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].x == 4)
+                                        target_function(all[a], empty_array);
+                                }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
+                                }
                 }
-                move_check_function();
-            }
-            break;
+        move_check_function();
+    }
+}
+function left() {
+    if (changeable) {
+        move_check = false;
+        for (let y = 1 ; y <= 4 ; y++)
+            for (let a = 0 ; a < 16 ; a++)
+                if (all[a].y == y && all[a].type == "number") {
+                        let empty_array = [];
+                        for (let b = a ; b > -1 ; b--)
+                            if (all[b].y == all[a].y && all[b].x < all[a].x)
+                                if (all[b].type == "empty") {
+                                    empty_array.push(all[b]);
+                                    if (all[b].x == 1)
+                                        target_function(all[a], empty_array);
+                                }
+                                else {
+                                    if (all[a].value == all[b].value && all[b].changeable)
+                                        double_function(a, b);
+                                    else if (empty_array.length != 0)
+                                            target_function(all[a], empty_array);
+                                    break;
+                                }
+                }
+        move_check_function();
     }
 }
 function move_check_function() {

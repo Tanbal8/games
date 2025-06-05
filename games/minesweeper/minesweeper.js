@@ -20,15 +20,10 @@ let bombDiv = document.querySelector(".bomb-num");
 let bombContent = document.querySelector(".bomb-content");
 let flagNum = 0;
 let addCheck = false;
-let gameWidth = 500;
-let gameHeight = 600;
-let divWH = 40;
-let divFS = 20;
 let checks = [false,true,false];
 let correctNum = 0;
 let emptys = [];
-let s = "00";
-let m = "00";
+let s = 0, m = 0;
 let sDiv = document.querySelector(".s");
 let mDiv = document.querySelector(".m");
 let restartText = document.querySelector(".restart-text");
@@ -146,18 +141,12 @@ function click() {
                     removeEmpty();
                     timer = setInterval(function() {
                         s++;
-                        if (s < 10) {
-                            s = "0" + s;
-                        }
                         if (s == 60) {
-                            s = "00";
+                            s = 0;
                             m++;
-                            if (m < 10) {
-                                m = "0" + m;
-                            }
                         }
-                        sDiv.innerHTML = s;
-                        mDiv.innerHTML = m;
+                        sDiv.innerHTML = s < 10 ? "0" + s : s;
+                        sDiv.innerHTML = m < 10 ? "0" + m : m;
                     } ,1000);
                 }
                 // in game
@@ -302,30 +291,18 @@ bombDiv.onmouseleave = function() {
 function size8() {
     kolNum = 8;
     gameParent.style.gridTemplateColumns = "auto auto auto auto auto auto auto auto";
-    gameWidth = 450;
-    gameHeight = 550;
-    divWH = 45;
-    divFS = 22;
     checks = [true,false,false];
     beee1();
 }
 function size10() {
     kolNum = 10;
     gameParent.style.gridTemplateColumns = "auto auto auto auto auto auto auto auto auto auto";
-    gameWidth = 500;
-    gameHeight = 600;
-    divWH = 40;
-    divFS = 20;
     checks = [false,true,false];
     beee1();
 }
 function size15() {
     kolNum = 15;
     gameParent.style.gridTemplateColumns = "auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto";
-    gameWidth = 540;
-    gameHeight = 640;
-    divWH = 30;
-    divFS = 18;
     checks = [false,false,true];
     beee1();
 }
@@ -333,15 +310,7 @@ function beee1() {
     game = false;
     sizeNumDiv.innerHTML = kolNum + " × " + kolNum;
     sizeContent.style.display = "none";
-    gameDiv.style.width = gameWidth + "px";
-    gameDiv.style.height = gameHeight + "px";
-    gameParent.style.height = gameWidth + "px";
     beee3();
-    for (let a = 0 ; a < kolNum ** 2 ; a++) {
-        kolDiv[a].style.width = divWH + "px";
-        kolDiv[a].style.height = divWH + "px";
-        kolDiv[a].style.fontSize = divFS + "px";
-    }
 }
 function bomb15() {
     bombNum = 15;

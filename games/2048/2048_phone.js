@@ -1,11 +1,14 @@
 var game_div = document.getElementById("game-div");
 var animation_div = document.getElementById("animation-div1");
 var all = [];
+var game_check = true;
 var changeable = true;
 var move_check = false;
 var move_size = 30;
 let touch_start_x;
 let touch_start_y;
+var move_timeout;
+var double_timeout;
 all_function();
 start_game();
 function all_function() {
@@ -162,12 +165,13 @@ function target_function(object, array) {
     move_function(object, target)
 }
 function move_function(object1, object2) {
-    move_check = true
+    if (!game_check) return;
+    move_check = true;
     let num1 = object1.number - 1;
     let num2 = object2.number - 1;
     let value1 = object1.value;
     all[num2].value = value1;
-    setTimeout(function() {
+    move_timeout = setTimeout(function() {
         all[num2].div.innerHTML = value1;
         background_function(object2.div, all[num2].value);
     }, 110);
@@ -199,10 +203,11 @@ function animation_function(object1, object2, number) {
     }, 120);
 }
 function double_function(a, b) {
+    if (!game_check) return;
     move_check = true;
     all[a].value = 0;
     all[b].value *= 2;
-    setTimeout(function() {
+    double_timeout = setTimeout(function() {
         all[b].div.innerHTML = all[b].value;
         background_function(all[b].div, all[b].value);
     }, 110);
@@ -214,45 +219,21 @@ function double_function(a, b) {
 }
 function background_function(div, value) {
     switch (value) {
-        case 2 :
-            div.style.backgroundColor = "#ffdaff";
-            break;
-        case 4 :
-            div.style.backgroundColor = "#fdddad";
-            break;
-        case 8 :
-            div.style.backgroundColor = "#feb856";
-            break;
-        case 16 :
-            div.style.backgroundColor = "#ff9456";
-            break;
-        case 32 :
-            div.style.backgroundColor = "#ff6d54";
-            break;
-        case 64 :
-            div.style.backgroundColor = "#fe714d";
-            break;
-        case 128 :
-            div.style.backgroundColor = "#fddb51";
-            break;
-        case 256 :
-            div.style.backgroundColor = "#ffd960";
-            break;
-        case 512 :
-            div.style.backgroundColor = "#ffda5a";
-            break;
-        case 1024 :
-            div.style.backgroundColor = "#ffb657";
-            break;
-        case 2048 :
-            div.style.backgroundColor = "#feb608";
-            break;
-        case 4096 :
-            div.style.backgroundColor = "#";
-            break;
-        case 8192 :
-            div.style.backgroundColor = "#";
-            break;
+        case 2: div.style.backgroundColor = "#ffdaff"; break;
+        case 4: div.style.backgroundColor = "#fdddad"; break;
+        case 8: div.style.backgroundColor = "#feb856"; break;
+        case 16: div.style.backgroundColor = "#ff9456"; break;
+        case 32: div.style.backgroundColor = "#ff6d54"; break;
+        case 64: div.style.backgroundColor = "#fe714d"; break;
+        case 128: div.style.backgroundColor = "#fddb51"; break;
+        case 256: div.style.backgroundColor = "#ffd960"; break;
+        case 512: div.style.backgroundColor = "#ffda5a"; break;
+        case 1024: div.style.backgroundColor = "#ffb657"; break;
+        case 2048: div.style.backgroundColor = "#feb608"; break;
+        case 4096: div.style.backgroundColor = "#ff9444"; break;
+        case 8192: div.style.backgroundColor = "#ff5555"; break;
+        case 16384: div.style.backgroundColor = "#ff00ff"; break; // رنگ دلخواه
+        default: div.style.backgroundColor = "#cccccc"; break;
     }
 }
 function add() {
@@ -279,6 +260,8 @@ function add() {
                             break;
                         }
             if (check) {
+                clearTimeout(move_timeout);
+                clearTimeout(double_timeout);
                 if (confirm("Game Over!\nrestart ?"))
                     start_game();
             }

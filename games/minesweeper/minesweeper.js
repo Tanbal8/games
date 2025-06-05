@@ -2,8 +2,9 @@ let kolDiv = [];
 let kol = [];
 let bombNum = 15;
 let kolNum = 10;
-window.startX;
-window.startY;
+var timer;
+var startX;
+var startY;
 let game = false;
 let gameDiv = document.querySelector(".game");
 let gameParent = document.querySelector(".bomb");
@@ -58,9 +59,9 @@ function KOL() {
         }
         let y = ((kolNum ** 2 - (n + (kolNum - x))) / kolNum) + 1;
         kol.push({x: x, y: y, div: kolDiv[a], type: "empty", bomb: 0, status: "hidden"});
-        kol[a].div.style.backgroundCoطپr = "#ddd";
+        kol[a].div.style.backgroundColor = "#ddd";
         kol[a].div.innerHTML = "";
-        kol[a].div.classList = "";
+        kol[a].div.className = "";
     }
     s = "00";
     m = "00";
@@ -77,7 +78,7 @@ function KOL() {
 function add() {
     let x = Math.floor(Math.random() * (kolNum ** 2));
     addCheck = false;
-    if (!(window.startX - 1 == kol[x].x && window.startY + 1 == kol[x].y) && !(window.startX == kol[x].x && window.startY + 1 == kol[x].y) && !(window.startX + 1 == kol[x].x && window.startY + 1 == kol[x].y) && !(window.startX - 1 == kol[x].x && window.startY == kol[x].y) && !(window.startX == kol[x].x && window.startY == kol[x].y) && !(window.startX + 1 == kol[x].x && window.startY == kol[x].y) && !(window.startX - 1 == kol[x].x && window.startY - 1 == kol[x].y) && !(window.startX == kol[x].x && window.startY - 1 == kol[x].y) && !(window.startX + 1 == kol[x].x && window.startY - 1 == kol[x].y)) {
+    if (!(startX - 1 == kol[x].x && startY + 1 == kol[x].y) && !(startX == kol[x].x && startY + 1 == kol[x].y) && !(startX + 1 == kol[x].x && startY + 1 == kol[x].y) && !(startX - 1 == kol[x].x && startY == kol[x].y) && !(startX == kol[x].x && startY == kol[x].y) && !(startX + 1 == kol[x].x && startY == kol[x].y) && !(startX - 1 == kol[x].x && startY - 1 == kol[x].y) && !(startX == kol[x].x && startY - 1 == kol[x].y) && !(startX + 1 == kol[x].x && startY - 1 == kol[x].y)) {
         if (kol[x].type == "empty") {
             addCheck = true;
             kol[x].type = "bomb";
@@ -97,8 +98,8 @@ function click() {
                     game = true;
                     div = kol[a];
                     emptyFunction();
-                    window.startX = kol[a].x;
-                    window.startY = kol[a].y;
+                    startX = kol[a].x;
+                    startY = kol[a].y;
                     for (let b = 0 ; b < bombNum ; b++) {
                         add();
                     }
@@ -143,7 +144,7 @@ function click() {
                     }
                     emptys.push(kol[a]);
                     removeEmpty();
-                    window.timer = setInterval(function() {
+                    timer = setInterval(function() {
                         s++;
                         if (s < 10) {
                             s = "0" + s;
@@ -199,7 +200,7 @@ function click() {
                     }
                 }
                 function endFunction() {
-                    clearInterval(window.timer);
+                    clearInterval(timer);
                     restart.style.display = "block";
                     setTimeout(function() {
                         restartDiv.style.display = "flex";
@@ -384,7 +385,7 @@ function Size() {
     }
 }
 function beee3() {
-    clearInterval(window.timer);
+    clearInterval(timer);
     KOL();
     click();
     correctNum = 0;

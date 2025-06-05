@@ -24,6 +24,7 @@ body {
     display: flex;
     flex-direction: column;
     border-radius: 20px;
+    overflow: hidden;
 }
 .game > div {
     width: 100%;
@@ -31,7 +32,6 @@ body {
 .bomb {
     height: 500px;
     background-color: #aaa;
-    border-radius: 0 0 20px 20px;
     box-sizing: border-box;
     padding: 5px;
     display: grid;
@@ -40,7 +40,7 @@ body {
 }
 .bomb > div {
     width: 40px;
-    height: 40px;
+    aspect-ratio: 1;
     background-color: #ddd;
     border-radius: 5px;
     cursor: pointer;
@@ -60,13 +60,14 @@ body {
 }
 .timer-div {
     width: 120px;
-    height: 38px;
+    height: 80%;
     background-color: #bbb;
     border-radius: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    font: 21px arial;
+    font-size: 21px;
+    font-family: arial;
     box-sizing: border-box;
     padding: 0 10px;
 }
@@ -88,7 +89,7 @@ body {
 }
 .aaa > div {
     width: 100px;
-    height: 38px;
+    height: 80%;
     background-color: #bbb;
     border-radius: 10px;
 }
@@ -102,9 +103,9 @@ body {
     align-items: center;
     width: 100%;
     height: 100%;
-    font: 20px arial;
+    font-size: 20px;
+    font-family: arial;
     box-sizing: border-box;
-    padding-bottom: 2px;
 }
 .size-content {
     width: 100%;
@@ -116,7 +117,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    font: 18px arial;
+    font-size: 18px;
+    font-family: arial;
     background-color: #999;
     box-shadow: 2px 2px 3px gray;
     display: none;
@@ -131,13 +133,13 @@ body {
 .size-content > div:hover {
     background-color: #888;
 }
-.size-content > div:first-child {
+.size-content > div:first-child, .bomb-content > div:first-child {
     border-radius: 10px 10px 0 0;
 }
-.size-content > div:last-child {
+.size-content > div:last-child, .bomb-content > div:last-child {
     border-radius: 0 0 10px 10px;
 }
-.size-content > div:not(:last-child) {
+.size-content > div:not(:last-child), .bomb-content > div:not(:last-child) {
     border-bottom: 1px solid #777;
 }
 .flag-num, .bomb-num {
@@ -164,7 +166,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font: 21px arial;
+    font-size: 21px;
+    font-family: arial;
 }
 .bomb-num {
     position: relative;
@@ -190,15 +193,6 @@ body {
     justify-content: center;
     align-items: center;
     transition: 0.2s;
-}
-.bomb-content > div:first-child {
-    border-radius: 10px 10px 0 0;
-}
-.bomb-content > div:last-child {
-    border-radius: 0 0 10px 10px;
-}
-.bomb-content > div:not(:last-child) {
-    border-bottom: 1px solid #777;
 }
 .bomb-content > div:hover {
     background-color: #888;
@@ -238,20 +232,21 @@ body {
     box-shadow: 2px 2px 3px gray;
 }
 .restart-div > div {
-    height: 25%;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .restart-text {
-    font: 50px agency;
+    font-size: 50px;
+    font-family: agency;
     letter-spacing: 2px;
 }
 .restart-timer {
     display: flex;
     flex-direction: row;
-    font: 35px consola;
+    font-size: 35px;
+    font-family: consola;
     letter-spacing: 3px;
 }
 .restart-timer > div {
@@ -263,9 +258,226 @@ body {
 }
 .restart-btn > button {
     width: 85px;
-    height: 40px;
+    aspect-ratio: 2;
     border-radius: 10px;
-    font: 20px arial;
+    font-size: 20px;
+    font-family: arial;
     border: 1px solid gray;
     cursor: pointer;
+}
+@media only screen and (max-width: 1025px) {
+    .game {
+        width: 450px;
+        height: 540px;
+        border-radius: 17px;
+    }
+    .bomb {
+        height: 450px;
+        padding: 4px;
+    }
+    .bomb > div {
+        width: 36px;
+        border-radius: 4px;
+        font-size: 18px;
+    }
+    .timer {
+        height: 45px;
+        border-radius: 18px 18px 0 0;
+    }
+    .timer-div {
+        width: 100px;
+        border-radius: 8px;
+        font-size: 18px;
+        padding: 0 8px;
+    }
+    .aaa {
+        height: 45px;
+        padding: 0 10px;
+    }
+    .aaa > div {
+        width: 100px;
+        border-radius: 8px;
+    }
+    .size-div, .f-num, .b-num {
+        font-size: 18px;
+    }
+    .size-content, .bomb-content {
+        border-radius: 8px;
+        font-size: 17px;
+        box-shadow: 2px 2px 2px gray;
+    }
+    .size-content > div, .bomb-content > div {
+        height: 36px;
+    }
+    .size-content > div:first-child, .bomb-content > div:first-child {
+        border-radius: 8px 8px 0 0;
+    }
+    .size-content > div:last-child, .bomb-content > div:last-child {
+        border-radius: 0 0 8px 8px;
+    } 
+    .f-img, .b-img {
+        background-size: 27px 27px;
+    }
+    .restart-div {
+        width: 350px;
+        height: 200px;
+        border-radius: 18px;
+        box-shadow: 2px 2px 2px gray;
+    }
+    .restart-text {
+        font-size: 43px;
+    }
+    .restart-timer {
+        font-size: 28px;
+        letter-spacing: 2.5px;
+    }
+    .restart-btn > button {
+        width: 70px;
+        border-radius: 8px;
+        font-size: 17px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .game {
+        width: 380px;
+        height: 464px;
+        border-radius: 14px;
+    }
+    .bomb {
+        height: 380px;
+        padding: 3px;
+    }
+    .bomb > div {
+        width: 32px;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    .timer {
+        height: 42px;
+        border-radius: 15px 15px 0 0;
+    }
+    .timer-div {
+        width: 80px;
+        border-radius: 7px;
+        font-size: 16px;
+        padding: 0 6px;
+    }
+    .aaa {
+        height: 42px;
+        padding: 0 10px;
+    }
+    .aaa > div {
+        width: 80px;
+        border-radius: 7px;
+    }
+    .size-div, .f-num, .b-num {
+        font-size: 16px;
+    }
+    .size-content, .bomb-content {
+        border-radius: 7px;
+        font-size: 15px;
+        box-shadow: 2px 2px 2px gray;
+    }
+    .size-content > div, .bomb-content > div {
+        height: 32px;
+    }
+    .size-content > div:first-child, .bomb-content > div:first-child {
+        border-radius: 7px 7px 0 0;
+    }
+    .size-content > div:last-child, .bomb-content > div:last-child {
+        border-radius: 0 0 7px 7px;
+    }
+    .f-img, .b-img {
+        background-size: 24px 24px;
+    }
+    .restart-div {
+        width: 300px;
+        height: 170px;
+        border-radius: 16px;
+        box-shadow: 2px 2px 2px gray;
+    }
+    .restart-text {
+        font-size: 38px;
+    }
+    .restart-timer {
+        font-size: 25px;
+        letter-spacing: 2px;
+    }
+    .restart-btn > button {
+        width: 65px;
+        border-radius: 7px;
+        font-size: 16px;
+    }
+}
+@media only screen and (max-width: 481px) {
+    .game {
+        width: 300px;
+        height: 380px;
+        border-radius: 10px;
+    }
+    .bomb {
+        height: 380px;
+        padding: 3px;
+    }
+    .bomb > div {
+        width: 26px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .timer {
+        height: 40px;
+        border-radius: 12px 12px 0 0;
+    }
+    .timer-div {
+        width: 70px;
+        border-radius: 6px;
+        font-size: 15px;
+        padding: 0 5px;
+    }
+    .aaa {
+        height: 40px;
+        padding: 0 10px;
+    }
+    .aaa > div {
+        width: 70px;
+        border-radius: 6px;
+    }
+    .size-divl .f-num, .b-num {
+        font-size: 14px;
+    }
+    .size-content, .bomb-content {
+        border-radius: 6px;
+        font-size: 13px;
+        box-shadow: 2px 2px 1px gray;
+    }
+    .size-content > div, .bomb-content > div {
+        height: 28px;
+    }
+    .size-content > div:first-child, .bomb-content > div:first-child {
+        border-radius: 6px 6px 0 0;
+    }
+    .size-content > div:last-child, .bomb-content > div:last-child {
+        border-radius: 0 0 6px 6px;
+    }
+    .f-img, .b-img {
+        background-size: 21px 21px;
+    }
+    .restart-div {
+        width: 250px;
+        height: 130px;
+        border-radius: 16px;
+        box-shadow: 2px 2px 2px gray;
+    }
+    .restart-text {
+        font-size: 33px;
+    }
+    .restart-timer {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+    .restart-btn > button {
+        width: 60px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
 }

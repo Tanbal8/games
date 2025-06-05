@@ -19,36 +19,30 @@ body {
     transform: translate(-50%, -50%);
 }
 .game {
-    width: 500px;
-    height: 600px;
+    height: fit-content;
     display: flex;
     flex-direction: column;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
 }
-.game > div {
-    width: 100%;
-}
 .bomb {
-    height: 500px;
+    width: 500px;
+    aspect-ratio: 1;
     background-color: #aaa;
-    box-sizing: border-box;
     padding: 5px;
     display: grid;
-    justify-content: space-evenly;
-    align-content: space-evenly;
+    box-sizing: border-box;
 }
 .bomb > div {
-    width: 40px;
-    aspect-ratio: 1;
     background-color: #ddd;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 18px;
     font-family: arial;
+    margin: 3px;
 }
 .timer {
     height: 50px;
@@ -267,18 +261,16 @@ body {
 }
 @media only screen and (max-width: 1025px) {
     .game {
-        width: 450px;
-        height: 540px;
         border-radius: 17px;
     }
     .bomb {
-        height: 450px;
+        width: 450px;
         padding: 4px;
     }
     .bomb > div {
-        width: 36px;
         border-radius: 4px;
         font-size: 18px;
+        margin: 4px;
     }
     .timer {
         height: 45px;
@@ -339,18 +331,16 @@ body {
 }
 @media only screen and (max-width: 768px) {
     .game {
-        width: 380px;
-        height: 464px;
         border-radius: 14px;
     }
     .bomb {
-        height: 380px;
+        width: 380px;
         padding: 3px;
     }
     .bomb > div {
-        width: 32px;
         border-radius: 4px;
         font-size: 16px;
+        margin: 2.5px;
     }
     .timer {
         height: 42px;
@@ -411,18 +401,16 @@ body {
 }
 @media only screen and (max-width: 481px) {
     .game {
-        width: 300px;
-        height: 380px;
         border-radius: 10px;
     }
     .bomb {
-        height: 380px;
+        width: 300px;
         padding: 3px;
     }
     .bomb > div {
-        width: 26px;
         border-radius: 4px;
         font-size: 14px;
+        margin: 1.5px;
     }
     .timer {
         height: 40px;
